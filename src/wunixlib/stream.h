@@ -7,6 +7,7 @@
  * Constantin MASSON
  * ----------------------------------------------------------------------------
  */
+
 #ifndef WUNIXLIB_STREAM_H
 #define WUNIXLIB_STREAM_H
 
@@ -21,13 +22,7 @@
 #include <string.h>
 #include <ctype.h>
 
-//TEMP_FAILURE_RETRY MACRO
-#define TEMP_FAILURE_RETRY(expression) \
-		(__extension__ ({ long int __result; \
-			do __result = (long int) (expression);\
-			while (__result == -1L && errno == EINTR);\
-		__result; }))
-
+#include "assets.h"
 
 
 // ----------------------------------------------------------------------------

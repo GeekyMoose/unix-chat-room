@@ -14,7 +14,7 @@ int accept_client(const int sock){
 	int client_socket;
 	client_socket = TEMP_FAILURE_RETRY(accept(sock, NULL, NULL));
 	if(client_socket == -1){
-		LOG_MSG("accept");
+		LOG_ERR("accept");
 		return -1;
 	}
 	return client_socket;
@@ -24,7 +24,7 @@ int make_socket(int domain, int type){
 	int sock;
 	sock = socket(domain, type, 0);
 	if(sock < 0){
-		LOG_MSG("socket");
+		LOG_ERR("socket");
 		return -1;
 	}
 	return sock;
@@ -47,13 +47,13 @@ int create_server_tcp_socket(const uint16_t port, const int backlog){
 	
 	//Bind socket with create address
 	if(bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0){
-		LOG_MSG("bind");
+		LOG_ERR("bind");
 		return -1;
 	}
 
 	//Start listening on this socket
 	if(listen(sock, backlog) < 0){
-		LOG_MSG("listen");
+		LOG_ERR("listen");
 		return -1;
 	}
 	return sock; //Return created socket
@@ -76,7 +76,7 @@ int create_client_tcp_socket(const char *address, const uint16_t port){
 
 	//Connect the created socket with the given remote socket.
 	if(connect(sock, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) < 0){
-		LOG_MSG("connect");
+		LOG_ERR("connect");
 		return -1;
 	}
 }
@@ -86,7 +86,7 @@ int recover_address(const char *address, const uint16_t port, struct sockaddr_in
 	
 	hostinfo = gethostbyname(address);
 	if(hostinfo == NULL){
-		LOG_MSG("hostinfo");
+		LOG_ERR("hostinfo");
 		return -1;
 	}
 
@@ -94,5 +94,32 @@ int recover_address(const char *address, const uint16_t port, struct sockaddr_in
 	addr->sin_family	= AF_INET;
 	addr->sin_port		= htons(port);
 	addr->sin_addr		= *(struct in_addr*) hostinfo->h_addr;
+	return 1;
+}
+
+int load_local_socket_data(int socked, uint16_t *port, char *ip){
+	struct sockaddr_in addr;
+	socklen_t length;
+	length = sizeof(addr);
+	if(getsockname(socked, (struct sockaddr *)&addr, &length) == -1){
+		LOG_ERR("getsockname");
+		return -1;
+	}
+
+	*port	= ntohs(addr.sin_port);
+	ip		= inet_ntoa(addr.sin_addr);
+	return 1;
+}
+
+int load_peer_socket_data(int socket, uint16_t *port, char *ip){
+	struct sockaddr_in addr;
+	socklen_t length;
+	length = sizeof(addr);
+	if(getpeername(socket, (struct sockaddr *)&addr, &length) == -1){
+		LOG_ERR("getpeername");
+		return -1;
+	}
+	*port	= ntohs(addr.sin_port);
+	ip		= inet_ntoa(addr.sin_addr);
 	return 1;
 }

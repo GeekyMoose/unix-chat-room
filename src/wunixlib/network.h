@@ -17,21 +17,11 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
+#include <unistd.h>
 
-
-//Display log message (For errors)
-#define LOG_MSG(msg) \
-		perror(msg); \
-		fprintf(stderr, "[ERR] file %s, line %d\n", __FILE__, __LINE__);
-
-//TEMP_FAILURE_RETRY MACRO
-#define TEMP_FAILURE_RETRY(expression) \
-		(__extension__ ({ long int __result; \
-			do __result = (long int) (expression);\
-			while (__result == -1L && errno == EINTR);\
-		__result; }))
-
+#include "assets.h"
 
 
 // ----------------------------------------------------------------------------
@@ -87,6 +77,27 @@ int create_client_tcp_socket(const char *address, const uint16_t port);
  */
 int recover_address(const char *address, const uint16_t port, struct sockaddr_in *addr);
 
+/**
+ * @brief			Recover the port and IP of the local socket
+ * @details			The ip value must be big enought (21) for the IP4 value 
+ * 					formated as followed: xxxx.xxxx.xxxx.xxxx
+ *
+ * @param port		Port variable where to place port value
+ * @param ip		Char array where to place result
+ * @return			1 if successfully done, otherwise, -1 if error
+ */
+int load_local_socket_data(int socked, uint16_t *port, char *ip);
+
+/**
+ * @brief			Recover the port and IP of the peer socket
+ * @details			The ip value must be big enought (21) for the IP4 value 
+ * 					formated as followed: xxxx.xxxx.xxxx.xxxx
+ *
+ * @param port		Port variable where to place port value
+ * @param ip		Char array where to place result
+ * @return			1 if successfully done, otherwise, -1 if error
+ */
+int load_peer_socket_data(int socket, uint16_t *port, char *ip);
 
 #endif
 

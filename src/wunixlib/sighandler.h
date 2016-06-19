@@ -7,11 +7,14 @@
  * Constantin MASSON
  * ----------------------------------------------------------------------------
  */
+
 #ifndef WUNIXLIB_SIGHANDLER_H
 #define WUNIXLIB_SIGHANDLER_H
 
 #include <signal.h>
 #include <string.h>
+
+#include "assets.h"
 
 
 // ----------------------------------------------------------------------------
