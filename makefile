@@ -10,10 +10,10 @@ BIN			= bin
 .PHONY: all
 all: server.o client.o
 
-server.o: server.c network.o
-	$(CC) $(CF_FLAGS) -o $@ $^
-client.o: client.c
-	$(CC) $(CF_FLAGS) -o $@ $^
+server.o: server.c network.o sighandler.o assets.h
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
+client.o: client.c network.o sighandler.o assets.h
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
 
 
 # ------------------------------------------------------------------------------
@@ -27,6 +27,8 @@ sighandler.o: sighandler.c sighandler.h
 stream.o: stream.c stream.h
 	$(CC) $(CF_FLAGS) -o $@ $< -c
 network.o: network.c network.h
+	$(CC) $(CF_FLAGS) -o $@ $< -c
+assets.o: assets.c assets.h
 	$(CC) $(CF_FLAGS) -o $@ $< -c
 
 
