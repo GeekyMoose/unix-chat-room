@@ -13,15 +13,7 @@
 // ----------------------------------------------------------------------------
 // File management
 // ----------------------------------------------------------------------------
-/**
- * @brief			Read data from a stream
- * @details			buffsize should be inf or equals to actual buf size.
- *
- * @param fd		File descriptor to read
- * @param buf		Buffer to fill with read data
- * @param buffsize	Max nb of character to read
- * @return			Number of characters read (negative if error)
- */
+
 int64_t bulk_read(int fd, char *buf, size_t buffsize){
 	int		c;
 	size_t	len=0;
@@ -36,15 +28,6 @@ int64_t bulk_read(int fd, char *buf, size_t buffsize){
 	return len;
 }
 
-/**
- * @brief			Write data in a file
- * @detail			Write maximum buffsize char (Must be inferior to actual buff size)
- *
- * @param fd		File descriptor where to write
- * @param buff		Buffer to fill
- * @param buffsize	Max number of char to write
- * @return			Number of written char (negative if error)
- */
 int64_t bulk_write(int fd, char *buf, size_t buffsize){
 	int		c;
 	size_t	len=0;
@@ -58,16 +41,6 @@ int64_t bulk_write(int fd, char *buf, size_t buffsize){
 	return len ;
 }
 
-/**
- * @brief			Add content in file
- * @details			Open the given file, add buf inside (To the end) and close file.
- * 					If buf size is more then 'len', only 'len' elements will be written
- *
- * @param filename	Path and name of the file to write
- * @param buf		Buffer with data to read
- * @param len		Max number of char to read from buff
- * @return			1 if successfully written, otherwise, return -1
- */
 int append_to_file(char *filename, char *buf, size_t len){
 	int fd, flags, perms;
 	flags = O_WRONLY|O_APPEND|O_CREAT;
