@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <netdb.h>
+#include <netinet/in.h>
 
 
 //Display log message (For errors)
@@ -43,7 +44,7 @@
  * @param socket	Socket where to apply accept
  * @return			The new socket connected
  */
-int accept_client(int socket);
+int accept_client(const int socket);
 
 /**
  * @brief		Create a new socket.
@@ -65,6 +66,29 @@ int make_socket(int domain, int type);
  */
 int create_server_tcp_socket(uint16_t port, int backlog);
 
+/**
+ * @brief			Create a new socket for a client.
+ * @details			The socket is created and connected with the requested server.
+ * 					If unable to connect, the function fails (And return -1)
+ *
+ * @param address	The address to connect with
+ * @param port		Port to use for the connection
+ * @return			The created socket or -1 if unable to connect
+ */
+int create_client_tcp_socket(const char *address, const uint16_t port);
+
+/**
+ * @brief			Recover the sockaddr_in data from the string name
+ *
+ * @param address	Address to recover
+ * @param port		Port to set in the returned address
+ * @param addr		The address to fill with recovered data
+ * @return			1 if successfully recovered, otherwise, return -1
+ */
+int recover_address(const char *address, const uint16_t port, struct sockaddr_in *addr);
+
+
 #endif
+
 
 
