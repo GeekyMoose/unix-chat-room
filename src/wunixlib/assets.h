@@ -10,6 +10,8 @@
 #ifndef WUNIXLIB_ASSETS_H
 #define WUNIXLIB_ASSETS_H
 
+#include <stdio.h>
+
 
 // ----------------------------------------------------------------------------
 // Defines
@@ -37,6 +39,26 @@
 //Display log message
 #define LOG_MSG(msg) \
 	fprintf(stderr, "[ERR] file %s, line %d\n", __FILE__, __LINE__);
+
+
+// ----------------------------------------------------------------------------
+// Prototypes
+// ----------------------------------------------------------------------------
+
+/**
+ * @brief		Read one line from stdin buffer.
+ * @details		If the read line is bigger than buffer, only 'size-1' elements 
+ * 				are recovered, then the buffer is cleaned.
+ *
+ * @param buff	Buffer where to place read line
+ * @param size	Buffer size
+ */
+int readline_stdin(char buff[], int size);
+
+/**
+ * @brief Clear the current stdin buffer
+ */
+void clear_buffer();
 
 
 #endif

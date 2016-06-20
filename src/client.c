@@ -6,13 +6,24 @@
  * Constantin MASSON
  * ----------------------------------------------------------------------------
  */
-#include <stdio.h>
-#include <stdlib.h>
 
-#include "wunixlib/assets.h"
-#include "wunixlib/sighandler.h"
-#include "wunixlib/network.h"
+#include "client.h"
 
+volatile sig_atomic_t is_working = TRUE;
+
+void prompt_cmd(){
+	char str[CMD_MAX_SIZE];
+	fprintf(stdout, "> ");
+	readline_stdin(str, CMD_MAX_SIZE);
+	process_console_line(str);
+}
+
+void display_console(){
+	fprintf(stdout, "Console.\n");
+	while(is_working == TRUE){
+		prompt_cmd();
+	}
+}
 
 void connect_to_server(const char *address, const uint16_t port){
 	int socket;
@@ -32,7 +43,8 @@ int main(int argc, char **argv){
 	sethandler(SIG_IGN, SIGPIPE);
 
 	//DEV: Temporary
-	connect_to_server("localhost", 4242);
+	//connect_to_server("localhost", 4242);
+	display_console();
 
 	fprintf(stdout, "Stop client\n");
 	return EXIT_SUCCESS;
