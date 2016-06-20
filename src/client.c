@@ -11,14 +11,7 @@
 
 volatile sig_atomic_t is_working = TRUE;
 
-void prompt_cmd(){
-	char str[CMD_MAX_SIZE];
-	fprintf(stdout, "> ");
-	readline_stdin(str, CMD_MAX_SIZE);
-	process_console_line(str);
-}
-
-void display_console(){
+static void display_console(){
 	fprintf(stdout, "Console.\n");
 	while(is_working == TRUE){
 		prompt_cmd();
@@ -42,8 +35,7 @@ int main(int argc, char **argv){
 	//Set handlers
 	sethandler(SIG_IGN, SIGPIPE);
 
-	//DEV: Temporary
-	//connect_to_server("localhost", 4242);
+	//Start the console
 	display_console();
 
 	fprintf(stdout, "Stop client\n");

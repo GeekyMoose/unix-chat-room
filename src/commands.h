@@ -19,10 +19,16 @@
 #include "wunixlib/assets.h"
 #include "helper.h"
 #include "constants.h"
+#include "client.h"
 
 
 #define CMD_MAX_SIZE 255
 
+/**
+ * @brief		Display one command prompt and wait for user cmd.
+ * @details		Function block till user enter its command.
+ */
+void prompt_cmd();
 
 /**
  * @brief		Process the received string from the console

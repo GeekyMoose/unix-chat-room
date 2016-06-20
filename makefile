@@ -12,7 +12,7 @@ all: server.exe client.exe
 
 
 
-server.exe: server.o commands.o network.o sighandler.o assets.o helper.o
+server.exe: server.o network.o sighandler.o assets.o helper.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
 client.exe: client.o commands.o network.o sighandler.o assets.o helper.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
@@ -20,9 +20,9 @@ client.exe: client.o commands.o network.o sighandler.o assets.o helper.o
 
 server.o: server.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-client.o: client.c client.h
+client.o: client.c client.h commands.h
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-commands.o: commands.c commands.h
+commands.o: commands.c commands.h client.h
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 helper.o: helper.c helper.h
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c

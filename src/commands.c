@@ -44,7 +44,7 @@ static void exec_connect(char *str){
 
 	//TODO Dev: to implements
 	fprintf(stdout, "DEBUG: user: %s / server: %s / port: %d\n", username, servername, port);
-	//connect_to_server(servername, port);
+	connect_to_server(servername, port);
 }
 
 
@@ -91,6 +91,9 @@ static void process_command(char *cmd){
 	}
 	else if(strcmp(cmd_name, "leave") == 0){
 	}
+	else{
+		fprintf(stderr, "Unknown command...\n");
+	}
 }
 
 static void process_whisper(char *msg){
@@ -101,6 +104,13 @@ static void process_whisper(char *msg){
 //------------------------------------------------------------------------------
 // Public functions
 //------------------------------------------------------------------------------
+
+void prompt_cmd(){
+	char str[CMD_MAX_SIZE];
+	fprintf(stdout, "> ");
+	readline_stdin(str, CMD_MAX_SIZE);
+	process_console_line(str);
+}
 
 void process_console_line(char *str){
 	//A command to execute in the server
