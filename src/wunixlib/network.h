@@ -32,8 +32,10 @@
 /**
  * \brief			Accept new connection for given socket.
  *
- * \param socket	Socket where to apply accept
- * \return			The new socket connected
+ * \param socket	Socket where to wait for incomming connection
+ * \return			The new socket connected or -1 if error and errno is set.
+ * 					If socket is not blocking and no connection available,
+ * 					return -2 (errno == EAGAIN or EWOULDBLOCK)
  */
 int accept_client(const int socket);
 

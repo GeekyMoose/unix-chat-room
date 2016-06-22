@@ -26,8 +26,8 @@ void list_clear(Linkedlist *list){
 	while(list->first != NULL){
 		current		= list->first;
 		list->first	= list->first->next;
+		//If data of node need to be free
 		if(list->freefct != NULL){
-			fprintf(stdout, "DEBUG %s:%d -> freefct called\n", __FILE__, __LINE__);
 			list->freefct(current->data);
 		}
 	}

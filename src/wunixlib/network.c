@@ -11,10 +11,14 @@
 
 #include "network.h"
 
-int accept_client(const int sock){
+int accept_client(const int socket){
 	int client_socket;
-	client_socket = TEMP_FAILURE_RETRY(accept(sock, NULL, NULL));
+	client_socket = TEMP_FAILURE_RETRY(accept(socket, NULL, NULL));
 	if(client_socket == -1){
+		//If errno == EAGAIN or EWOULDBLOCK, means socket is non blocking
+		if(errno == EAGAIN || errno == EWOULDBLOCK){
+			return -2;
+		}
 		LOG_ERR("accept");
 		return -1;
 	}
