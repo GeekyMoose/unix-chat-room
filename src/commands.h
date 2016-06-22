@@ -18,9 +18,11 @@
 #include <inttypes.h>
 
 #include "wunixlib/assets.h"
+
 #include "helper.h"
 #include "constants.h"
 #include "client.h"
+#include "user.h"
 
 
 #define CMD_MAX_SIZE 255

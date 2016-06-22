@@ -1,26 +1,14 @@
 // -----------------------------------------------------------------------------
 /**
- * \file	helper.h
+ * \file	room.c
  * \author	Constantin MASSON
- * \date	June 19, 2016
+ * \date	June 23, 2016
  *
- * \brief	General helper
+ * \brief	Room component
  * \note	C Library for the Unix Programming Project
  */
 // -----------------------------------------------------------------------------
 
-#ifndef UNIXPROJECT_HELPER_H
-#define UNIXPROJECT_HELPER_H
-
-#include <stdio.h>
-#include <string.h>
-
-#include "wunixlib/assets.h"
-
-#include "constants.h"
-
-
-#endif
-
+#include "room.h"
 
 

@@ -1,26 +1,17 @@
 // -----------------------------------------------------------------------------
 /**
- * \file	helper.h
+ * \file	server_data.c
  * \author	Constantin MASSON
- * \date	June 19, 2016
+ * \date	June 23, 2016
  *
- * \brief	General helper
+ * \brief	Data in the server component
  * \note	C Library for the Unix Programming Project
  */
 // -----------------------------------------------------------------------------
 
-#ifndef UNIXPROJECT_HELPER_H
-#define UNIXPROJECT_HELPER_H
-
-#include <stdio.h>
-#include <string.h>
-
-#include "wunixlib/assets.h"
-
-#include "constants.h"
+#include "server_data.h"
 
 
-#endif
-
-
-
+void init_server_data(){
+	list_init(&list_users, NULL);
+}

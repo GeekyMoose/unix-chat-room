@@ -34,7 +34,7 @@ static void exec_connect(char *str){
 	servername	= strtok(NULL, "@");
 
 	//Check whether values are valid
-	if(is_valid_username(username) == FALSE){
+	if(user_is_valid_name(username) == FALSE){
 		fprintf(stderr, "Invalid username, size must be between %d and %d\n",
 				USER_MIN_SIZE, USER_MAX_SIZE);
 		return;

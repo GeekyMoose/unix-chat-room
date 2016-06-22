@@ -4,27 +4,38 @@ LIBS_FLAG	= -pthread
 VPATH		= src src/wunixlib
 BIN			= bin
 
+WUNIXLIB_OBJ= sighandler.o stream.o network.o assets.o linkedlist.o
+
+
 # ------------------------------------------------------------------------------
-# project compilation
+# General rules
 # ------------------------------------------------------------------------------
 .PHONY: all
 all: server.exe client.exe
 
 
-
-server.exe: server.o network.o sighandler.o assets.o helper.o
+server.exe: server.o helper.o $(WUNIXLIB_OBJ) server_data.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
-client.exe: client.o commands.o network.o sighandler.o assets.o helper.o
+client.exe: client.o helper.o $(WUNIXLIB_OBJ) commands.o user.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
 
 
-server.o: server.c
-	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+# ------------------------------------------------------------------------------
+# project compilation
+# ------------------------------------------------------------------------------
 client.o: client.c client.h commands.h
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-commands.o: commands.c commands.h client.h
+commands.o: commands.c commands.h client.h user.h
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 helper.o: helper.c helper.h
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+room.o: room.c room.h
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+server.o: server.c
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+server_data.o: server_data.c server_data.h
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+user.o: user.c user.h
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 
 
@@ -38,6 +49,8 @@ stream.o: stream.c stream.h
 network.o: network.c network.h
 	$(CC) $(CF_FLAGS) $< -c
 assets.o: assets.c assets.h
+	$(CC) $(CF_FLAGS) $< -c
+linkedlist.o: linkedlist.c linkedlist.h
 	$(CC) $(CF_FLAGS) $< -c
 
 

@@ -9,48 +9,35 @@
  */
 // -----------------------------------------------------------------------------
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <pthread.h>
-
-#include "wunixlib/network.h"
-#include "wunixlib/sighandler.h"
-#include "wunixlib/assets.h"
-
-#define BACKLOG 10
-
+#include "server.h"
 
 volatile sig_atomic_t is_listening = FALSE;
 
 
-void usage(char *name){
-	fprintf(stdout, "USAGE: %s port\n", name);
-	exit(EXIT_FAILURE);
-}
-
+// -----------------------------------------------------------------------------
+// Client management functions
+// -----------------------------------------------------------------------------
 void *client_handler(){
 	fprintf(stdout, "New client accepted\n");
 }
 
-void start_listening_clients(const int socket){
+void server_start_listening_clients(const int socket){
 	if(is_listening == TRUE){
 		fprintf(stdout, "Server is already listening\n");
 		return;
 	}
 	is_listening = TRUE;
 	fprintf(stdout, "Server start listening new clients\n");
-	int client_socket;
 	pthread_t thread_id;
 	while(is_listening == TRUE){
 		fprintf(stdout, "Wait for client...\n");
-		client_socket = accept_client(socket);
+		int client_socket = accept_client(socket); //accept new client
 		pthread_create(&thread_id, NULL, client_handler, NULL);
 		pthread_join(thread_id, NULL);
 	}
 }
 
-void stop_listening_clients(){
+void server_stop_listening_clients(){
 	if(is_listening == FALSE){
 		fprintf(stdout, "Server is already not listening\n");
 		return;
@@ -59,8 +46,18 @@ void stop_listening_clients(){
 	is_listening = FALSE;
 }
 
-void siginthandler(int sig){
-	stop_listening_clients();
+static void siginthandler(int sig){
+	server_stop_listening_clients();
+}
+
+
+// -----------------------------------------------------------------------------
+// Start / Launch functions
+// -----------------------------------------------------------------------------
+
+static void usage(char *name){
+	fprintf(stderr, "USAGE: %s port\n", name);
+	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char **argv){
@@ -82,18 +79,23 @@ int main(int argc, char **argv){
 	//Create the server socket, bind it, start listening
 	int sock = create_server_tcp_socket(atoi(argv[1]), BACKLOG);
 	if(sock < 0){
-		fprintf(stderr, "Unable to start the server...\n");
+		fprintf(stderr, "Unable to start the server (Unable to create the socket)...\n");
 		return EXIT_FAILURE;
 	}
+
+	//Initialize server data
+	init_server_data();
 
 	//Start listening for new clients
-	start_listening_clients(sock);
+	server_start_listening_clients(sock);
 
 	//Close the socket
+	fprintf(stdout, "Server is closing. Close socket...\n");
 	if(TEMP_FAILURE_RETRY(close(sock)) < 0){
+		fprintf(stderr, "Error while closing the socket...\n");
 		return EXIT_FAILURE;
 	}
 
-	fprintf(stdout, "Server stop\n");
+	fprintf(stdout, "Server is stopped\n");
 	return EXIT_SUCCESS;
 }
