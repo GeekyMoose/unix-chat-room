@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * C Library for the Unix Programming Project
- * Stream management
+// -----------------------------------------------------------------------------
+/**
+ * \file	stream.h
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Stream management
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #ifndef WUNIXLIB_STREAM_H
 #define WUNIXLIB_STREAM_H
@@ -30,36 +31,36 @@
 // ----------------------------------------------------------------------------
 
 /**
- * @brief			Read data from a stream
- * @details			buffsize should be inf or equals to actual buf size.
+ * \brief			Read data from a stream
+ * \details			buffsize should be inf or equals to actual buf size.
  *
- * @param fd		File descriptor to read
- * @param buf		Buffer to fill with read data
- * @param buffsize	Max nb of character to read
- * @return			Number of characters read (negative if error)
+ * \param fd		File descriptor to read
+ * \param buf		Buffer to fill with read data
+ * \param buffsize	Max nb of character to read
+ * \return			Number of characters read (negative if error)
  */
 int64_t bulk_read(int, char*, size_t);
 
 /**
- * @brief			Write data in a file
- * @detail			Write maximum buffsize char (Must be inferior to actual buff size)
+ * \brief			Write data in a file
+ * \detail			Write maximum buffsize char (Must be inferior to actual buff size)
  *
- * @param fd		File descriptor where to write
- * @param buff		Buffer to fill
- * @param buffsize	Max number of char to write
- * @return			Number of written char (negative if error)
+ * \param fd		File descriptor where to write
+ * \param buff		Buffer to fill
+ * \param buffsize	Max number of char to write
+ * \return			Number of written char (negative if error)
  */
 int64_t bulk_write(int, char*, size_t);
 
 /**
- * @brief			Add content in file
- * @details			Open the given file, add buf inside (To the end) and close file.
+ * \brief			Add content in file
+ * \details			Open the given file, add buf inside (To the end) and close file.
  * 					If buf size is more then 'len', only 'len' elements will be written
  *
- * @param filename	Path and name of the file to write
- * @param buf		Buffer with data to read
- * @param len		Max number of char to read from buff
- * @return			1 if successfully written, otherwise, return -1
+ * \param filename	Path and name of the file to write
+ * \param buf		Buffer with data to read
+ * \param len		Max number of char to read from buff
+ * \return			1 if successfully written, otherwise, return -1
  */
 int append_to_file(char *filename, char *buf, size_t len);
 

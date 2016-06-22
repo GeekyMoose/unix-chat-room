@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * C Library for the Unix Programming Project
- * Network / Socket management
+// -----------------------------------------------------------------------------
+/**
+ * \file	network.c
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Network / Socket management
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #include "network.h"
 

@@ -1,13 +1,13 @@
+// -----------------------------------------------------------------------------
 /**
  * \file	linkedlist.c
  * \author	Constantin MASSON
  * \date	June 22, 2016
  *
- * \details	Simple generic linkedlist.
- *
- * Implementation file
+ * \brief	Simple generic linkedlist.
+ * \note	C Library for the Unix Programming Project
  */
-
+// -----------------------------------------------------------------------------
 
 #include "linkedlist.h"
 

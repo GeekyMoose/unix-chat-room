@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * C Library for the Unix Programming Project
- * Signal management
+// -----------------------------------------------------------------------------
+/**
+ * \file	sighandler.c
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Signal management
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #include "sighandler.h"
 

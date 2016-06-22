@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * Unix C project
- * Manage client command line
+// -----------------------------------------------------------------------------
+/**
+ * \file	commands.h
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Client commands component
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #ifndef UNIXPROJECT_COMMANDS_H
 #define UNIXPROJECT_COMMANDS_H
@@ -25,16 +26,16 @@
 #define CMD_MAX_SIZE 255
 
 /**
- * @brief		Display one command prompt and wait for user cmd.
- * @details		Function block till user enter its command.
+ * \brief		Display one command prompt and wait for user cmd.
+ * \details		Function block till user enter its command.
  */
 void prompt_cmd();
 
 /**
- * @brief		Process the received string from the console
- * @details		String can be a simple message, a command, a whisper.
+ * \brief		Process the received string from the console
+ * \details		String can be a simple message, a command, a whisper.
  *
- * @param str	String to process
+ * \param str	String to process
  */
 void process_console_line(char *str);
 

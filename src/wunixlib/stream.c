@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * C Library for the Unix Programming Project
- * Stream management
+// -----------------------------------------------------------------------------
+/**
+ * \file	stream.c
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Stream management
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #include "stream.h"
 

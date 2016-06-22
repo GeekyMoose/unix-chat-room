@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * C Library for the Unix Programming Project
- * Assets functions and maccros
+// -----------------------------------------------------------------------------
+/**
+ * \file	assets.c
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Assets functions and maccros
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #include "assets.h"
 

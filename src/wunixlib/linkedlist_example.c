@@ -1,3 +1,13 @@
+// -----------------------------------------------------------------------------
+/**
+ * \file	linkedlist_example.c
+ * \author	Constantin MASSON
+ * \date	June 22, 2016
+ *
+ * \brief	Example of implementation of linkedlist
+ * \note	C Library for the Unix Programming Project
+ */
+// -----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>

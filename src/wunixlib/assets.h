@@ -1,12 +1,14 @@
-/*
- * ----------------------------------------------------------------------------
- * C Library for the Unix Programming Project
- * Assets functions and macros
+// -----------------------------------------------------------------------------
+/**
+ * \file	assets.h
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Assets functions and maccros
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
+
 #ifndef WUNIXLIB_ASSETS_H
 #define WUNIXLIB_ASSETS_H
 
@@ -24,19 +26,28 @@
 // MACROS
 // ----------------------------------------------------------------------------
 
-//TEMP_FAILURE_RETRY MACRO
+/**
+ * \brief	TEMP_FAILURE_RETRY macro
+ * \details	Implementation from _GNU_SOURCE
+ */
 #define TEMP_FAILURE_RETRY(expression) \
 		(__extension__ ({ long int __result; \
 			do __result = (long int) (expression);\
 			while (__result == -1L && errno == EINTR);\
 		__result; }))
 
-//Display log error message
+/**
+ * \brief			Display log error message
+ * \param source	Source function of the error
+ */
 #define LOG_ERR(source) \
 		perror(source); \
 		fprintf(stderr, "[ERR] file %s, line %d\n", __FILE__, __LINE__);
 
-//Display log message
+/**
+ * \brief		Display simple log message
+ * \param msg	Message to display
+ */
 #define LOG_MSG(msg) \
 	fprintf(stderr, "[ERR] file %s, line %d\n", __FILE__, __LINE__);
 
@@ -46,17 +57,17 @@
 // ----------------------------------------------------------------------------
 
 /**
- * @brief		Read one line from stdin buffer.
- * @details		If the read line is bigger than buffer, only 'size-1' elements 
+ * \brief		Read one line from stdin buffer.
+ * \details		If the read line is bigger than buffer, only 'size-1' elements 
  * 				are recovered, then the buffer is cleaned.
  *
- * @param buff	Buffer where to place read line
- * @param size	Buffer size
+ * \param buff	Buffer where to place read line
+ * \param size	Buffer size
  */
 int readline_stdin(char buff[], int size);
 
 /**
- * @brief Clear the current stdin buffer
+ * \brief Clear the current stdin buffer
  */
 void clear_buffer();
 

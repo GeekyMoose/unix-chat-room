@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * Unix C project
- * Constants
+// -----------------------------------------------------------------------------
+/**
+ * \file	constants.h
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	General constants
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #ifndef UNIXPROJECT_CONSTANTS_H
 #define UNIXPROJECT_CONSTANTS_H

@@ -1,12 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * Unix C project
- * Manage client command line
+// -----------------------------------------------------------------------------
+/**
+ * \file	commands.c
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Client commands component
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #include "commands.h"
 

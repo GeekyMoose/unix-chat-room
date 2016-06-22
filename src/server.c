@@ -1,11 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * Unix C project - Server
+// -----------------------------------------------------------------------------
+/**
+ * \file	server.c
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Server component
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>

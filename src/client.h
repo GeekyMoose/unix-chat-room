@@ -1,11 +1,13 @@
-/*
- * ----------------------------------------------------------------------------
- * Unix C project - Client
+// -----------------------------------------------------------------------------
+/**
+ * \file	client.h
+ * \author	Constantin MASSON
+ * \date	June 19, 2016
  *
- * June 19, 2016
- * Constantin MASSON
- * ----------------------------------------------------------------------------
+ * \brief	Client component
+ * \note	C Library for the Unix Programming Project
  */
+// -----------------------------------------------------------------------------
 
 #ifndef UNIXPROJECT_CLIENT_H
 #define UNIXPROJECT_CLIENT_H

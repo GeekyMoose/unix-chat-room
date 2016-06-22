@@ -1,9 +1,11 @@
+// -----------------------------------------------------------------------------
 /**
  * \file		linkedlist.h
  * \author		Constantin MASSON
  * \date		June 22, 2016
  *
- * \details		Simple generic linkedlist.
+ * \brief		Simple generic linkedlist.
+ * \note		C Library for the Unix Programming Project
  *
  * Header file
  *
@@ -26,6 +28,7 @@
  * 				The result will be a list of 10 element pointing to the same 
  * 				integer (With value 11).
  */
+// -----------------------------------------------------------------------------
 
 #ifndef WUNIXLIB_LINKEDLIST_H
 #define WUNIXLIB_LINKEDLIST_H
