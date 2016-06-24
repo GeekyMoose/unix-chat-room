@@ -49,7 +49,7 @@ int messaging_exec_server_receive(ServerData *server, const int socket, char *ms
 	if(token == NULL){ return -1; }
 
 	//Process each possible message
-	if(token == "connect"){
+	if(strcmp(token,"connect") == 0){
 		messaging_server_exec_connect(server, socket, strtok(NULL, MSG_DELIMITER));
 	}
 	return -1; //Means no message match
@@ -73,6 +73,7 @@ int messaging_send_connect(const int socket, const char *name){
 	strcpy(buffer, cmd);
 	strcat(buffer, name);
 	bulk_write(socket, buffer, strlen(buffer));
+	free(buffer);
 	return 1;
 }
 

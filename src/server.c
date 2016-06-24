@@ -55,8 +55,9 @@ void server_start_listening_clients(ServerData *server, const int socket){
 		tinfo.server	= server;
 		tinfo.id		= thread_id;
 		pthread_create(&thread_id, NULL, client_handler, (void*)&tinfo);
-		pthread_join(thread_id, NULL);
+		pthread_detach(thread_id);
 	}
+
 }
 
 void server_stop_listening_clients(ServerData *server){

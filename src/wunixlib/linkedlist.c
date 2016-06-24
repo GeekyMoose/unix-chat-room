@@ -107,10 +107,10 @@ int list_append_first(Linkedlist *list, void * const data){
 
 void* list_getfirst(const Linkedlist *list){
 	assert(list != NULL);
-	return list->first;
+	return list->first->data;
 }
 
 void* list_getlast(const Linkedlist *list){
 	assert(list != NULL);
-	return list->last;
+	return list->last->data;
 }
