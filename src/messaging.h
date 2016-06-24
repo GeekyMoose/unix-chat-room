@@ -14,10 +14,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include "wunixlib/stream.h"
-#include "server_data.h"
-#include "user.h"
 
 #define MSG_DELIMITER ";;;"
 

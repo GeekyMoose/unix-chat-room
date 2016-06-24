@@ -43,16 +43,9 @@ static void exec_connect(char *str){
 		fprintf(stderr, "Invalid command. Usage: !connect <username>@<server> [:port]\n");
 		return;
 	}
-
-	//Check whether values are valid (Note: name actually also done server side)
-	if(user_is_valid_name(username) == FALSE){
-		fprintf(stderr, "Invalid username, size must be between %d and %d\n",
-				USER_MIN_SIZE, USER_MAX_SIZE);
-		return;
-	}
-	//If no port given, set to default value (Values are cuz sscanf in case of empty value)
+	//If no port given, set to default
 	if(port == 0 || port == 65535){
-		port = PORT_DEFAULT;
+		port = PORT_DEFAULT; //65535 or 0 sounds to be set if no value in sscanf
 	}
 
 	//Connect and send name (Or return if unable to connect)

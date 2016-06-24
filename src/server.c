@@ -23,11 +23,12 @@ struct thread_info{
 // Client management functions
 // -----------------------------------------------------------------------------
 void *client_handler(void *args){
-	fprintf(stdout, "New client accepted\n");
+	fprintf(stdout, "New client request.\n");
 	struct thread_info *tinfo = args;
+	char buff[MSG_MAX_SIZE];
 	while(1){
 		//TODO CRIT: Add exit process
-		char buff[MSG_MAX_SIZE];
+		memset(buff, 0x00, sizeof(buff));
 		recv(tinfo->user->socket, buff, MSG_MAX_SIZE, 0);
 		messaging_exec_server_receive(tinfo->server, tinfo->user->socket, buff);
 	}

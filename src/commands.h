@@ -20,10 +20,9 @@
 #include "wunixlib/assets.h"
 
 #include "helper.h"
+#include "messaging.h"
 #include "constants.h"
 #include "client.h"
-#include "user.h"
-#include "messaging.h"
 
 
 /**
