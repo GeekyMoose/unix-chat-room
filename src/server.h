@@ -24,6 +24,7 @@
 
 #include "server_data.h"
 #include "user.h"
+#include "messaging.h"
 
 /** \brief Max number of client possible in accept queue */
 #define BACKLOG 10
@@ -33,16 +34,21 @@
 /**
  * \brief			Start listening to new client.
  * \details			If server is already listening, do nothing.
+ * \warning			Server must be not null.
  *
+ * \param server	Server to start listening
  * \param socket	Server socket where to listen
  */
-void server_start_listening_clients(const int socket);
+void server_start_listening_clients(ServerData *server, const int socket);
 
 /**
- * \brief		Stop listening for new client.
- * \details		Do nothing if already not listening.
+ * \brief			Stop listening for new client.
+ * \details			Do nothing if already not listening.
+ * \warning			Server must be not null.
+ *
+ * \param server	Server to stop listening.
  */
-void server_stop_listening_clients();
+void server_stop_listening_clients(ServerData *server);
 
 
 #endif

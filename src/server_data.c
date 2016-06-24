@@ -15,4 +15,5 @@
 void server_data_init(ServerData *data){
 	assert(data != NULL);
 	list_init(&(data->list_users), NULL);
+	data->is_listening = 0;
 }

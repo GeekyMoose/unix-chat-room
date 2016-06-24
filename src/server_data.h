@@ -12,7 +12,10 @@
 #ifndef UNIXPROJECT_SERVER_DATA_H
 #define UNIXPROJECT_SERVER_DATA_H
 
+#include <signal.h>
+
 #include "wunixlib/linkedlist.h"
+#include "constants.h"
 
 
 // -----------------------------------------------------------------------------
@@ -20,6 +23,7 @@
 // -----------------------------------------------------------------------------
 
 typedef struct _server_data{
+	volatile sig_atomic_t is_listening;
 	Linkedlist list_users; //List of connected users.
 } ServerData;
 

@@ -11,7 +11,12 @@
 
 #include "server.h"
 
-volatile sig_atomic_t is_listening = FALSE;
+
+struct thread_info{
+	User		*user;
+	ServerData	*server;
+	pthread_t	id;
+};
 
 
 // -----------------------------------------------------------------------------
@@ -19,52 +24,58 @@ volatile sig_atomic_t is_listening = FALSE;
 // -----------------------------------------------------------------------------
 void *client_handler(void *args){
 	fprintf(stdout, "New client accepted\n");
-	User user;
-	memcpy(&user, args, sizeof(args));
+	struct thread_info *tinfo = args;
 	while(1){
 		//TODO CRIT: Add exit process
 		char buff[MSG_MAX_SIZE];
-		recv(user.socket, buff, MSG_MAX_SIZE, 0);
-		//TODO DEBUG TEMP
-		fprintf(stdout, "DEBUG (%s:%d): Receive message: %s\n", __FILE__, __LINE__, buff);
+		recv(tinfo->user->socket, buff, MSG_MAX_SIZE, 0);
+		messaging_exec_server_receive(tinfo->server, tinfo->user->socket, buff);
 	}
 }
 
-void server_start_listening_clients(const int socket){
-	if(is_listening == TRUE){
-		fprintf(stdout, "Server is already listening\n");
+void server_start_listening_clients(ServerData *server, const int socket){
+	if(server->is_listening == TRUE){
+		fprintf(stdout, "Server is already listening.\n");
 		return;
 	}
-	is_listening = TRUE;
-	fprintf(stdout, "Server start listening new clients\n");
-	pthread_t thread_id;
-	while(is_listening == TRUE){
-		User client; //Already create user
+	server->is_listening = TRUE;
+	fprintf(stdout, "Server start listening for new clients.\n");
+	//Listen for client, start thread for each new connected
+	while(server->is_listening == TRUE){
 		fprintf(stdout, "Wait for client...\n");
 		int client_socket = accept_client(socket); //accept new client
-		client.socket = client_socket;
-		pthread_create(&thread_id, NULL, client_handler, (void*)&client);
+		//Create thread args
+		struct thread_info tinfo;
+		pthread_t thread_id;
+		User client;
+		memset(&client, 0x00, sizeof(client));
+		memset(&tinfo, 0x00, sizeof(tinfo));
+		client.socket	= client_socket;
+		tinfo.user		= &client;
+		tinfo.server	= server;
+		tinfo.id		= thread_id;
+		pthread_create(&thread_id, NULL, client_handler, (void*)&tinfo);
 		pthread_join(thread_id, NULL);
 	}
 }
 
-void server_stop_listening_clients(){
-	if(is_listening == FALSE){
+void server_stop_listening_clients(ServerData *server){
+	if(server->is_listening == FALSE){
 		fprintf(stdout, "Server is already not listening\n");
 		return;
 	}
 	fprintf(stdout, "Server stop listening for new clients\n");
-	is_listening = FALSE;
-}
-
-static void siginthandler(int sig){
-	server_stop_listening_clients();
+	server->is_listening = FALSE;
 }
 
 
 // -----------------------------------------------------------------------------
 // Start / Launch functions
 // -----------------------------------------------------------------------------
+
+static void siginthandler(ServerData *server, int sig){
+	server_stop_listening_clients(server); //TODO
+}
 
 static void usage(char *name){
 	fprintf(stderr, "USAGE: %s port\n", name);
@@ -99,7 +110,7 @@ int main(int argc, char **argv){
 	server_data_init(&server);
 
 	//Start listening for new clients
-	server_start_listening_clients(sock);
+	server_start_listening_clients(&server, sock);
 
 	//Close the socket
 	fprintf(stdout, "Server is closing. Close socket...\n");
