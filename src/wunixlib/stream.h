@@ -32,7 +32,9 @@
 
 /**
  * \brief			Read data from a stream
- * \details			buffsize should be inf or equals to actual buf size.
+ * \details			Try to read exactly fuffsize element in buffer and block
+ * 					untill it's done.
+ * \warning			buffsize should be inf or equals to actual buf size.
  *
  * \param fd		File descriptor to read
  * \param buf		Buffer to fill with read data
@@ -43,7 +45,9 @@ int64_t bulk_read(int, char*, size_t);
 
 /**
  * \brief			Write data in a file
- * \detail			Write maximum buffsize char (Must be inferior to actual buff size)
+ * \details			Try to write exactly fuffsize element in buffer and block 
+ * 					untill it's done.
+ * \warning			Write maximum buffsize char (Must be inferior to actual buff size)
  *
  * \param fd		File descriptor where to write
  * \param buff		Buffer to fill

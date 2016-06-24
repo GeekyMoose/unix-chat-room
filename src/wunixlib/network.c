@@ -66,11 +66,11 @@ int create_server_tcp_socket(const uint16_t port, const int backlog){
 
 int create_client_tcp_socket(const char *address, const uint16_t port){
 	struct sockaddr_in addr;
-	int sock;
+	int socket;
 	
 	//Create the socket
-	sock = make_socket(AF_INET, SOCK_STREAM);
-	if(sock < 0){
+	socket = make_socket(AF_INET, SOCK_STREAM);
+	if(socket < 0){
 		return -1;
 	}
 
@@ -80,10 +80,12 @@ int create_client_tcp_socket(const char *address, const uint16_t port){
 	}
 
 	//Connect the created socket with the given remote socket.
-	if(connect(sock, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) < 0){
+	//TODO Add INTERRUPT management (See connect documentation)
+	if(connect(socket, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) < 0){
 		LOG_ERR("connect");
 		return -1;
 	}
+	return socket;
 }
 
 int recover_address(const char *address, const uint16_t port, struct sockaddr_in *addr){
