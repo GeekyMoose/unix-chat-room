@@ -9,6 +9,9 @@
  */
 // -----------------------------------------------------------------------------
 
+#ifndef UNIXPROJECT_ROOM_H
+#define UNIXPROJECT_ROOM_H
+
 #include "user.h"
 
 
@@ -71,3 +74,9 @@ int room_add_user(Room *room, User *user);
  * \return		1 if successfully removed, otherwise, return -1
  */
 int room_remove_user(Room *room, User *user);
+
+
+#endif
+
+
+

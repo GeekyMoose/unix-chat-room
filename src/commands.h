@@ -23,9 +23,8 @@
 #include "constants.h"
 #include "client.h"
 #include "user.h"
+#include "messaging.h"
 
-
-#define CMD_MAX_SIZE 255
 
 /**
  * \brief		Display one command prompt and wait for user cmd.

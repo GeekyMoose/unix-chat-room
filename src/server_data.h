@@ -9,6 +9,9 @@
  */
 // -----------------------------------------------------------------------------
 
+#ifndef UNIXPROJECT_SERVER_DATA_H
+#define UNIXPROJECT_SERVER_DATA_H
+
 #include "wunixlib/linkedlist.h"
 
 
@@ -16,11 +19,10 @@
 // Structures / Data
 // -----------------------------------------------------------------------------
 
-/**
- * \brief	List of all connected users
- * \details	Linkedlist
- */
-Linkedlist list_users;
+typedef struct _server_data{
+	Linkedlist list_users; //List of connected users.
+} ServerData;
+
 
 
 // -----------------------------------------------------------------------------
@@ -30,11 +32,17 @@ Linkedlist list_users;
 /**
  * \brief Initialize the server data.
  */
-void init_server_data();
+void server_data_init(ServerData *server);
 
 /**
  * \todo	Not implemented yet
  *
  * \brief
  */
-int add_user_in_server(); //TODO
+int add_user_in_server(ServerData *server); //TODO
+
+
+#endif
+
+
+

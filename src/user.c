@@ -20,3 +20,8 @@ int user_is_valid_name(const char *name){
 	}
 	return 1;
 }
+
+int user_is_used(const Linkedlist *list, const char *name){
+	//TODO To implements (Atm, says user is not in list in all case)
+	return 0;
+}

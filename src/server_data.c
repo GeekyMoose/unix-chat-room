@@ -12,6 +12,7 @@
 #include "server_data.h"
 
 
-void init_server_data(){
-	list_init(&list_users, NULL);
+void server_data_init(ServerData *data){
+	assert(data != NULL);
+	list_init(&(data->list_users), NULL);
 }

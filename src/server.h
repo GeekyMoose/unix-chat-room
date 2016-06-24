@@ -9,6 +9,9 @@
  */
 // -----------------------------------------------------------------------------
 
+#ifndef UNIXPROJECT_SERVER_H
+#define UNIXPROJECT_SERVER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -17,8 +20,10 @@
 #include "wunixlib/network.h"
 #include "wunixlib/sighandler.h"
 #include "wunixlib/assets.h"
+#include "wunixlib/stream.h"
 
 #include "server_data.h"
+#include "user.h"
 
 /** \brief Max number of client possible in accept queue */
 #define BACKLOG 10
@@ -38,3 +43,9 @@ void server_start_listening_clients(const int socket);
  * \details		Do nothing if already not listening.
  */
 void server_stop_listening_clients();
+
+
+#endif
+
+
+

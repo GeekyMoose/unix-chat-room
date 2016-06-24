@@ -14,10 +14,15 @@
 
 //------------------------------------------------------------------------------
 // Static functions for each command process
+//
+// Each function process a specific command and execute the required action.
+// In all case, str parameter is the command written by user without the command 
+// name (For example, without !connect' for connection command)
 //------------------------------------------------------------------------------
+
 static void exec_connect(char *str){
 	//If first elt is '\0', means no param given. Show usage
-	if(*str == '\0'){
+	if(str[0] == '\0'){
 		fprintf(stderr, "Invalid command. Usage: !connect <username>@<server> [:port]\n");
 		return;
 	}
@@ -33,19 +38,28 @@ static void exec_connect(char *str){
 	username	= token;
 	servername	= strtok(NULL, "@");
 
-	//Check whether values are valid
+	//Servername and username must be here
+	if(username == NULL || servername == NULL){
+		fprintf(stderr, "Invalid command. Usage: !connect <username>@<server> [:port]\n");
+		return;
+	}
+
+	//Check whether values are valid (Note: name actually also done server side)
 	if(user_is_valid_name(username) == FALSE){
 		fprintf(stderr, "Invalid username, size must be between %d and %d\n",
 				USER_MIN_SIZE, USER_MAX_SIZE);
 		return;
 	}
-	if(port == 0){
+	//If no port given, set to default value (Values are cuz sscanf in case of empty value)
+	if(port == 0 || port == 65535){
 		port = PORT_DEFAULT;
 	}
 
-	//TODO Dev: to implements
-	fprintf(stdout, "DEBUG: user: %s / server: %s / port: %d\n", username, servername, port);
-	connect_to_server(servername, port);
+	//Connect and send name (Or return if unable to connect)
+	int socket = client_connect_to_server(servername, port);
+	if(socket == -1){ return; }
+	fprintf(stdout, "Send name to server...\n");
+	messaging_send_connect(socket, username);
 }
 
 

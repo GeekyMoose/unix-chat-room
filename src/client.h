@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------
 // Prototypes
 //------------------------------------------------------------------------------
-void connect_to_server(const char *address, const uint16_t port);
+int client_connect_to_server(const char *address, const uint16_t port);
 
 #endif
 

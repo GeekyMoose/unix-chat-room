@@ -17,8 +17,17 @@ volatile sig_atomic_t is_listening = FALSE;
 // -----------------------------------------------------------------------------
 // Client management functions
 // -----------------------------------------------------------------------------
-void *client_handler(){
+void *client_handler(void *args){
 	fprintf(stdout, "New client accepted\n");
+	User user;
+	memcpy(&user, args, sizeof(args));
+	while(1){
+		//TODO CRIT: Add exit process
+		char buff[MSG_MAX_SIZE];
+		recv(user.socket, buff, MSG_MAX_SIZE, 0);
+		//TODO DEBUG TEMP
+		fprintf(stdout, "DEBUG (%s:%d): Receive message: %s\n", __FILE__, __LINE__, buff);
+	}
 }
 
 void server_start_listening_clients(const int socket){
@@ -30,9 +39,11 @@ void server_start_listening_clients(const int socket){
 	fprintf(stdout, "Server start listening new clients\n");
 	pthread_t thread_id;
 	while(is_listening == TRUE){
+		User client; //Already create user
 		fprintf(stdout, "Wait for client...\n");
 		int client_socket = accept_client(socket); //accept new client
-		pthread_create(&thread_id, NULL, client_handler, NULL);
+		client.socket = client_socket;
+		pthread_create(&thread_id, NULL, client_handler, (void*)&client);
 		pthread_join(thread_id, NULL);
 	}
 }
@@ -84,7 +95,8 @@ int main(int argc, char **argv){
 	}
 
 	//Initialize server data
-	init_server_data();
+	ServerData server;
+	server_data_init(&server);
 
 	//Start listening for new clients
 	server_start_listening_clients(sock);

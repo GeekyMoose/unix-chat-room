@@ -20,15 +20,16 @@ static void display_console(){
 	}
 }
 
-void connect_to_server(const char *address, const uint16_t port){
+int client_connect_to_server(const char *address, const uint16_t port){
 	int socket;
 	fprintf(stdout, "Try to connect server (%s) at port %d...\n", address, port);
 	socket = create_client_tcp_socket(address, port);
 	if(socket < 0){
-		fprintf(stderr, "Unable to connect to server\n");
-		return;
+		fprintf(stderr, "Unable to connect to server.\n");
+		return -1;
 	}
-	fprintf(stdout, "Connection successfully done\n");
+	fprintf(stdout, "Connection successfully done.\n");
+	return socket;
 }
 
 int main(int argc, char **argv){

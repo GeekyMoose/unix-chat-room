@@ -14,28 +14,30 @@ WUNIXLIB_OBJ= sighandler.o stream.o network.o assets.o linkedlist.o
 all: server.exe client.exe
 
 
-server.exe: server.o helper.o $(WUNIXLIB_OBJ) server_data.o
+server.exe: server.o helper.o user.o messaging.o $(WUNIXLIB_OBJ) server_data.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
-client.exe: client.o helper.o $(WUNIXLIB_OBJ) commands.o user.o
+client.exe: client.o helper.o user.o messaging.o $(WUNIXLIB_OBJ) commands.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
 
 
 # ------------------------------------------------------------------------------
 # project compilation
 # ------------------------------------------------------------------------------
-client.o: client.c client.h commands.h
+client.o: client.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-commands.o: commands.c commands.h client.h user.h
+commands.o: commands.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-helper.o: helper.c helper.h
+helper.o: helper.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-room.o: room.c room.h
+messaging.o: messaging.c
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+room.o: room.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 server.o: server.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-server_data.o: server_data.c server_data.h
+server_data.o: server_data.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
-user.o: user.c user.h
+user.o: user.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 
 
