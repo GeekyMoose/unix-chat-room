@@ -19,6 +19,7 @@
 
 #include "wunixlib/assets.h"
 
+#include "client_data.h"
 #include "helper.h"
 #include "messaging.h"
 #include "constants.h"
@@ -26,18 +27,21 @@
 
 
 /**
- * \brief		Display one command prompt and wait for user cmd.
- * \details		Function block till user enter its command.
+ * \brief			Display one command prompt and wait for user cmd.
+ * \details			Function block till user enter its command.
+ *
+ * \param client	Client owner of the command prompt
  */
-void prompt_cmd();
+void prompt_cmd(ClientData *client);
 
 /**
- * \brief		Process the received string from the console
- * \details		String can be a simple message, a command, a whisper.
+ * \brief			Process the received string from the console
+ * \details			String can be a simple message, a command, a whisper.
  *
- * \param str	String to process
+ * \param client	Client who wrote the line
+ * \param str		String to process
  */
-void process_console_line(char *str);
+void process_console_line(ClientData *client, char *str);
 
 
 #endif

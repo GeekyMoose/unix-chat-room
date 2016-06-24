@@ -20,7 +20,7 @@
 // name (For example, without !connect' for connection command)
 //------------------------------------------------------------------------------
 
-static void exec_connect(char *str){
+static void exec_connect(ClientData *client, char *str){
 	//If first elt is '\0', means no param given. Show usage
 	if(str[0] == '\0'){
 		fprintf(stderr, "Invalid command. Usage: !connect <username>@<server> [:port]\n");
@@ -49,7 +49,7 @@ static void exec_connect(char *str){
 	}
 
 	//Connect and send name (Or return if unable to connect)
-	int socket = client_connect_to_server(servername, port);
+	int socket = client_connect_to_server(client, servername, port);
 	if(socket == -1){ return; }
 	fprintf(stdout, "Send name to server...\n");
 	messaging_send_connect(socket, username);
@@ -70,7 +70,7 @@ static int is_whisper(const char *str){
 	return str[0] == '*' ? TRUE : FALSE;
 }
 
-static void process_command(char *cmd){
+static void process_command(ClientData *client, char *cmd){
 	//Check whether command size is correct
 	if(strlen(cmd) > CMD_MAX_SIZE){
 		fprintf(stderr, "Command is to long.");
@@ -85,7 +85,7 @@ static void process_command(char *cmd){
 
 	//Call function according to command received
 	if(strcmp(cmd_name, "connect") == 0){
-		exec_connect(args);
+		exec_connect(client, args);
 	}
 	else if(strcmp(cmd_name, "bye") == 0){
 	}
@@ -113,17 +113,27 @@ static void process_whisper(char *msg){
 // Public functions
 //------------------------------------------------------------------------------
 
-void prompt_cmd(){
+void prompt_cmd(ClientData *client){
 	char str[CMD_MAX_SIZE];
-	fprintf(stdout, "> ");
+	switch(client->status){
+		case CONNECTED:
+			fprintf(stdout, "%s > ", client->login);
+			break;
+		case CONNECTING:
+			fprintf(stdout, "connecting > ");
+			break;
+		default:
+			fprintf(stdout, "> ");
+			break;
+	}
 	readline_stdin(str, CMD_MAX_SIZE);
-	process_console_line(str);
+	process_console_line(client, str);
 }
 
-void process_console_line(char *str){
+void process_console_line(ClientData *client, char *str){
 	//A command to execute in the server
 	if(is_command(str) == TRUE){
-		process_command(str);
+		process_command(client, str);
 		return;
 	}
 	//Whipser to specific user
@@ -132,7 +142,4 @@ void process_console_line(char *str){
 		return;
 	}
 	//Simple message to send to the server
-	else{
-		return;
-	}
 }

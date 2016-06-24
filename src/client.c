@@ -11,16 +11,19 @@
 
 #include "client.h"
 
-volatile sig_atomic_t is_working = TRUE;
 
-static void display_console(){
+static void display_console(ClientData *client){
 	fprintf(stdout, "Console.\n");
-	while(is_working == TRUE){
-		prompt_cmd();
+	while(client->is_working == TRUE){
+		prompt_cmd(client);
 	}
 }
 
-int client_connect_to_server(const char *address, const uint16_t port){
+int client_connect_to_server(ClientData *client, const char *address, const uint16_t port){
+	if(client->status == CONNECTED || client->status == CONNECTING){
+		fprintf(stderr, "You are already connected!\n");
+		return -1;
+	}
 	int socket;
 	fprintf(stdout, "Try to connect server (%s) at port %d...\n", address, port);
 	socket = create_client_tcp_socket(address, port);
@@ -28,6 +31,8 @@ int client_connect_to_server(const char *address, const uint16_t port){
 		fprintf(stderr, "Unable to connect to server.\n");
 		return -1;
 	}
+	client->status	= CONNECTING;
+	client->socket	= socket;
 	fprintf(stdout, "Connection successfully done.\n");
 	return socket;
 }
@@ -38,8 +43,10 @@ int main(int argc, char **argv){
 	//Set handlers
 	sethandler(SIG_IGN, SIGPIPE);
 
-	//Start the console
-	display_console();
+	//Create client data and start the console
+	ClientData c;
+	client_data_init(&c);
+	display_console(&c);
 
 	fprintf(stdout, "Stop client\n");
 	return EXIT_SUCCESS;

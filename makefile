@@ -16,7 +16,7 @@ all: server.exe client.exe
 
 server.exe: server.o helper.o messaging.o $(WUNIXLIB_OBJ) server_data.o messaging_server.o user.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
-client.exe: client.o helper.o messaging.o $(WUNIXLIB_OBJ) commands.o messaging_client.o
+client.exe: client.o helper.o messaging.o $(WUNIXLIB_OBJ) client_data.o commands.o messaging_client.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
 
 
@@ -24,6 +24,8 @@ client.exe: client.o helper.o messaging.o $(WUNIXLIB_OBJ) commands.o messaging_c
 # project compilation
 # ------------------------------------------------------------------------------
 client.o: client.c
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+client_data.o: client_data.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 commands.o: commands.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
