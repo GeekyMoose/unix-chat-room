@@ -14,9 +14,9 @@ WUNIXLIB_OBJ= sighandler.o stream.o network.o assets.o linkedlist.o
 all: server.exe client.exe
 
 
-server.exe: server.o helper.o user.o messaging.o $(WUNIXLIB_OBJ) server_data.o
+server.exe: server.o helper.o user.o messaging.o $(WUNIXLIB_OBJ) server_data.o messaging_server.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
-client.exe: client.o helper.o user.o messaging.o $(WUNIXLIB_OBJ) commands.o
+client.exe: client.o helper.o user.o messaging.o $(WUNIXLIB_OBJ) commands.o messaging_client.o
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) -o $@ $^
 
 
@@ -30,6 +30,10 @@ commands.o: commands.c
 helper.o: helper.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 messaging.o: messaging.c
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+messaging_server.o: messaging_server.c
+	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
+messaging_client.o: messaging_client.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c
 room.o: room.c
 	$(CC) $(CF_FLAGS) $(LIBS_FLAG) $< -c

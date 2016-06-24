@@ -34,6 +34,7 @@ void *client_handler(void *args){
 }
 
 void server_start_listening_clients(ServerData *server, const int socket){
+	//Server shouldn't already be listening
 	if(server->is_listening == TRUE){
 		fprintf(stdout, "Server is already listening.\n");
 		return;
@@ -57,7 +58,6 @@ void server_start_listening_clients(ServerData *server, const int socket){
 		pthread_create(&thread_id, NULL, client_handler, (void*)&tinfo);
 		pthread_detach(thread_id);
 	}
-
 }
 
 void server_stop_listening_clients(ServerData *server){

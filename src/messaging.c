@@ -13,50 +13,6 @@
 
 
 // -----------------------------------------------------------------------------
-// Static function for server message execution
-// -----------------------------------------------------------------------------
-static int messaging_server_exec_connect(ServerData *server, const int socket, const char *user_name){
-	//Check is valid name
-	if(user_is_valid_name(user_name) != 1){
-		fprintf(stderr, "Connect requested with invalid name: %s\n", user_name);
-		messaging_send_error(socket, "Name is not valid.");
-		return -1;
-	}
-	//Check name is not used
-	if(user_is_used(&(server->list_users), user_name)){
-		fprintf(stderr, "Connect requested but name already used: %s\n", user_name);
-		messaging_send_error(socket, "Name is already used.");
-		return -1;
-	}
-	//Add name in server
-	User new_user;
-	strcpy(new_user.login, user_name); //Pass the name in struct
-	list_append(&(server->list_users), &new_user); //Add user in server list
-	fprintf(stdout, "New user (%s) added in server\n", user_name);
-	return 1;
-}
-
-
-// -----------------------------------------------------------------------------
-// Receive process Functions
-// -----------------------------------------------------------------------------
-
-int messaging_exec_server_receive(ServerData *server, const int socket, char *msg){
-	if(msg == NULL){ return -1; }
-
-	//Recover the type of message (First element in msg, must be not NULL)
-	char *token = strtok(msg, MSG_DELIMITER);
-	if(token == NULL){ return -1; }
-
-	//Process each possible message
-	if(strcmp(token,"connect") == 0){
-		messaging_server_exec_connect(server, socket, strtok(NULL, MSG_DELIMITER));
-	}
-	return -1; //Means no message match
-}
-
-
-// -----------------------------------------------------------------------------
 // Send Functions
 // -----------------------------------------------------------------------------
 

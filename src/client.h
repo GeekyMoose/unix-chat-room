@@ -20,6 +20,7 @@
 #include "wunixlib/network.h"
 
 #include "commands.h"
+#include "messaging_client.h"
 
 
 //------------------------------------------------------------------------------

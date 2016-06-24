@@ -25,6 +25,7 @@
 #include "server_data.h"
 #include "user.h"
 #include "messaging.h"
+#include "messaging_server.h"
 
 /** \brief Max number of client possible in accept queue */
 #define BACKLOG 10

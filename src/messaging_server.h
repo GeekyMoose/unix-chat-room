@@ -1,0 +1,49 @@
+// -----------------------------------------------------------------------------
+/**
+ * \file	messaging_server.h
+ * \author	Constantin MASSON
+ * \date	June 24, 2016
+ *
+ * \brief	Message logic / Server side only
+ * \note	C Library for the Unix Programming Project
+ */
+// -----------------------------------------------------------------------------
+
+#ifndef UNIXPROJECT_MESSAGING_SERVER_H
+#define UNIXPROJECT_MESSAGING_SERVER_H
+
+
+#include <stdio.h>
+#include <string.h>
+
+#include "wunixlib/stream.h"
+#include "server_data.h"
+#include "user.h"
+#include "messaging.h"
+
+
+// -----------------------------------------------------------------------------
+// Receive process
+// -----------------------------------------------------------------------------
+
+/**
+ * \brief			Process the given message in server side.
+ * \details			Recover the type of message from the given msg and execute
+ * 					the action for that kind of message.
+ * 					NULL message return -1.
+ * \note			This function is meant to be used by server side.
+ * \warning			Message parameter will be altered and shouldn't be used anymore.
+ * \warning			Server shouldn't be null.
+ *
+ * \param server	Server used
+ * \param socket	The socket where message is from
+ * \param msg		Message to process
+ * \return			1 if successfully processed, otherwise, -1 (Unknown message)
+ */
+int messaging_exec_server_receive(ServerData *server, const int socket, char *msg);
+
+
+#endif
+
+
+
