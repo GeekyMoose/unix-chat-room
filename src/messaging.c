@@ -49,10 +49,10 @@ int messaging_send_confirm(const int socket){
 	return 1;
 }
 
-int messaging_send_error(const int socket, char *msg){
+int messaging_send_error(const int socket, char *type, char *msg){
 	char *cmd		= "error"MSG_DELIMITER;
 	char *buffer	= NULL;
-	buffer = (char*)malloc(sizeof(char) * (strlen(cmd)+strlen(msg)));
+	buffer = (char*)malloc(sizeof(char) * (strlen(cmd)+strlen(type)+strlen(msg)));
 	//Check if malloc failed.
 	if(buffer == NULL){
 		fprintf(stderr, "[ERR] Internal error occured. Unable to malloc (%s:%d)\n", __FILE__, __LINE__);
@@ -60,6 +60,9 @@ int messaging_send_error(const int socket, char *msg){
 	}
 	//Create the message (Possible update: check if fct failed)
 	strcpy(buffer, cmd);
+	strcat(buffer, MSG_DELIMITER);
+	strcat(buffer, type);
+	strcat(buffer, MSG_DELIMITER);
 	strcat(buffer, msg);
 	bulk_write(socket, buffer, strlen(buffer));
 	return 1;

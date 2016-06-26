@@ -18,6 +18,8 @@
 
 #define MSG_DELIMITER ";;;"
 
+// List of possible error value
+#define MSG_ERR_CONNECT "msg_err_connect"
 
 // -----------------------------------------------------------------------------
 // Send functions
@@ -32,8 +34,9 @@
 
 int messaging_send_connect(const int socket, const char *name);
 int messaging_send_confirm(const int socket);
-int messaging_send_error(const int socket, char *msg);
+int messaging_send_error(const int socket, char *type, char *msg);
 int messaging_send_whiper(const int socket, const char *sender, const char *receiver, const char *msg);
+
 
 
 #endif

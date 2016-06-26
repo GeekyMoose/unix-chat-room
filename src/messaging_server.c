@@ -23,13 +23,13 @@ static int messaging_server_exec_connect(ServerData *server, const int socket, c
 	//If invalid name
 	if(errstatus == -1){
 		fprintf(stderr, "Connect requested with invalid name: %s\n", user_name);
-		messaging_send_error(socket, "Name is not valid.");
+		messaging_send_error(socket, MSG_ERR_CONNECT, "Name is not valid.");
 		return -1;
 	}
 	//If user already in server
 	else if(errstatus == -2){
 		fprintf(stderr, "Connect requested but name already used: %s\n", user_name);
-		messaging_send_error(socket, "Name is already used.");
+		messaging_send_error(socket, MSG_ERR_CONNECT,  "Name is already used.");
 		return -1;
 	}
 	fprintf(stdout, "New user (%s) added in server\n", user_name);
