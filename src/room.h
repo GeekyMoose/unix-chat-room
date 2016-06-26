@@ -27,21 +27,34 @@
 typedef struct _room{
 	char name[ROOM_MAX_SIZE+1]; //+1 for '\0'
 	Linkedlist list_users; //List user in this room
+	char owner_name[USER_MAX_SIZE];
 } Room;
 
 
 // -----------------------------------------------------------------------------
-// Functions
+// General Functions
 // -----------------------------------------------------------------------------
 
 /**
- * \brief		Initialize a room with default value.
- * \details		Room is set with empty list of user inside and empty name.
- * \warning		Throw assert error if null param.
+ * \brief		Create a new room.
+ * \details		Created room must be destroyed when not used anymore.
+ * \warning		Parameters must be not null, otherwise, assert error thrown.
  *
- * \param room	Room to initialize
+ * \param owner	User owner of this room at creation time
+ * \param name	Name of the room
+ * \return		Pointer to created room or NULL if error
  */
-void room_init(Room *room);
+Room* room_create(User *owner, const char *name);
+
+/**
+ * \brief		Destroy a room (Free all its memory).
+ * \details		The given room won't exists anymore
+ * \warning		Thrown assert error if null parameter
+ *
+ * \param room	Room to destroy
+ * \return		1 if successfully destroyed, otherwise, return -1
+ */
+int room_destroy(Room *room);
 
 /**
  * \brief		Check whether the given name is valid for a room

@@ -64,7 +64,15 @@ static void messaging_server_exec_open_room(ServerData *server, User *user, char
 		messaging_send_error(user->socket, MSG_GENERAL_ERR, "Invalid room name: already used.");
 		return;
 	}
+	//Malloc error
+	else if(errstatus == 0){
+		fprintf(stderr, "Unable to create room '%s': internal error (malloc).\n", name);
+		messaging_send_error(user->socket, MSG_GENERAL_ERR, "Sorry, we are unable to create the room.");
+		return;
+	}
 	fprintf(stdout, "New room created: '%s' (Owner: '%s')\n", name, user->login);
+	fprintf(stdout, "Current rooms:\n");
+	list_iterate(&(server->list_rooms), room_display);
 	messaging_send_confirm(user->socket, "Room successfully created");
 }
 

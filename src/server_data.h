@@ -76,7 +76,10 @@ int server_data_name_is_used(const Linkedlist *list, const char *name);
  * \param server	Server where to add room
  * \param user		User owner of this room
  * \param			Name to give for this room
- * \return			1 if successfully added, -1 if invalid name, -2 if already in server
+ * \return			1 if successfully added,
+ * 					0 if error occured,
+ * 					-1 if invalid name,
+ * 					-2 if already in server
  */
 int server_data_add_room(ServerData *server, User *user, const char *name);
 

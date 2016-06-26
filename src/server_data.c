@@ -46,11 +46,14 @@ int server_data_add_room(ServerData *server, User *user, const char *name){
 	if(server_data_room_is_used(&(server->list_rooms), name) == 1){
 		return -2;
 	}
-	//Create the room and add it in server
+	Room *room = room_create(user, name);
+	if(room == NULL){
+		return 0;
+	}
+	list_append(&(server->list_rooms), room);
 	return 1;
 }
 
 int server_data_room_is_used(const Linkedlist *list, const char *name){
-	//TODO
-	return 0;
+	return list_contains_where(list, (void*)name, room_match_name);
 }
