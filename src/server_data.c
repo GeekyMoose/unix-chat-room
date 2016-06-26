@@ -34,8 +34,7 @@ int server_data_add_user(ServerData *server, User *user){
 }
 
 int server_data_name_is_used(const Linkedlist *list, const char *name){
-	//TODO To implements (Atm, says user is not in list in all case)
-	return 0;
+	return list_contains_where(list, (void*)name, user_match_name);
 }
 
 int server_data_add_room(ServerData *server, User *user, const char *name){
@@ -47,34 +46,11 @@ int server_data_add_room(ServerData *server, User *user, const char *name){
 	if(server_data_room_is_used(&(server->list_rooms), name) == 1){
 		return -2;
 	}
-	//Add room in server
+	//Create the room and add it in server
 	return 1;
 }
 
 int server_data_room_is_used(const Linkedlist *list, const char *name){
 	//TODO
 	return 0;
-}
-
-// -----------------------------------------------------------------------------
-// List function implementations
-// -----------------------------------------------------------------------------
-
-int server_data_user_match_name(void* user, void* name){
-	User u = *(User*) user;
-	name = (char*) name;
-	if(strcmp(u.login, name) == 0){
-		return 1;
-	}
-	return 0;
-}
-
-int server_data_user_display(void* user){
-	if(user == NULL){
-		fprintf(stdout, "User is null\n");
-		return 1;
-	}
-	User u = *(User*) user;
-	fprintf(stdout, "User login '%s' / socket '%d' \n", u.login, u.socket);
-	return 1;
 }

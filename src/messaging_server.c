@@ -37,7 +37,7 @@ static void messaging_server_exec_connect(ServerData *server, User *user, const 
 	}
 	fprintf(stdout, "New user (%s) added in server (Sending confirmation)\n", user_name);
 	fprintf(stdout, "Current user list:\n");
-	list_iterate(&(server->list_users), server_data_user_display);
+	list_iterate(&(server->list_users), user_display);
 	messaging_send_confirm(user->socket, "You have been successfully registered in server");
 	return;
 }
@@ -83,7 +83,7 @@ static void  messaging_server_exec_whisper(ServerData *server, User *user, char 
 	}
 
 	//Recover the receiver from list of user (Send error if wrong)
-	User *u = list_get_where(&(server->list_users), receiver, server_data_user_match_name);
+	User *u = list_get_where(&(server->list_users), receiver, user_match_name);
 	if(u == NULL){
 		messaging_send_error(user->socket, MSG_ERR_UNKOWN_USER, "User doesn't exists");
 		return;

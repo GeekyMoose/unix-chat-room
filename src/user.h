@@ -34,7 +34,7 @@ typedef struct _user{
 
 
 // -----------------------------------------------------------------------------
-// Functions
+// General Functions
 // -----------------------------------------------------------------------------
 
 /**
@@ -45,6 +45,31 @@ typedef struct _user{
  */
 int user_is_valid_name(const char *name);
 
+
+// -----------------------------------------------------------------------------
+// List function implementations
+// -----------------------------------------------------------------------------
+
+/**
+ * \brief		Used for list.
+ * \details		Check whether name given match user name from list.
+ * \details		See wunixlib/Linkedlist documentation for further informations.
+ *
+ * \param user	User tested
+ * \param name	Name to test
+ * \return		1 if match, otherwise, return 0
+ */
+int user_match_name(void* user, void* name);
+
+/**
+ * \brief		Display one user data.
+ * \details		Meant to be used as iterate function for list.
+ * 				User can be null (Null will be displayed).
+ *
+ * \param user	Void pointer to user
+ * \return		1
+ */
+int user_display(void* user);
 
 #endif
 

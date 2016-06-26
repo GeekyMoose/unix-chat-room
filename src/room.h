@@ -86,6 +86,31 @@ int room_add_user(Room *room, User *user);
 int room_remove_user(Room *room, User *user);
 
 
+// -----------------------------------------------------------------------------
+// List Functions
+// -----------------------------------------------------------------------------
+
+/**
+ * \brief		Used for list.
+ * \details		Check whether name given match room name from list.
+ * \details		See wunixlib/Linkedlist documentation for further informations.
+ *
+ * \param Room	Room tested
+ * \param name	Name to test
+ * \return		1 if match, otherwise, return 0
+ */
+int room_match_name(void* room, void* name);
+
+/**
+ * \brief		Display one room data.
+ * \details		Meant to be used as iterate function for list.
+ * 				Room can be null (Null will be displayed).
+ *
+ * \param room	Void pointer to room
+ * \return		1
+ */
+int room_display(void* room);
+
 #endif
 
 

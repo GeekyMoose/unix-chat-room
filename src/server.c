@@ -95,6 +95,7 @@ static void usage(char *name){
 }
 
 int main(int argc, char **argv){
+	system("clear");
 	fprintf(stdout, "Server start\n");
 
 	//check parameters (Must be: port_number)

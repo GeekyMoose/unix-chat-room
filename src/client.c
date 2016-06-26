@@ -22,7 +22,8 @@ struct thread_info{
 // Static functions (Privates)
 // -----------------------------------------------------------------------------
 static void display_console(ClientData *client){
-	fprintf(stdout, "Console.\n");
+	system("clear");
+	fprintf(stdout, "Console. (You can write !help to see the list of commands)\n");
 	while(client->is_working == TRUE){
 		prompt_cmd(client);
 	}
