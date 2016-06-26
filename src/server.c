@@ -24,7 +24,7 @@ struct thread_info{
 // -----------------------------------------------------------------------------
 void *client_handler(void *args){
 	fprintf(stdout, "New client request.\n");
-	struct thread_info *tinfo = args;
+	struct thread_info *tinfo = (struct thread_info*)args;
 	char buff[MSG_MAX_SIZE];
 	while(1){
 		//TODO CRIT: Add exit process

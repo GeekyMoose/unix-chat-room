@@ -52,7 +52,10 @@ static void exec_connect(ClientData *client, char *str){
 	int socket = client_connect_to_server(client, servername, port);
 	if(socket == -1){ return; }
 	fprintf(stdout, "Send name to server...\n");
+	strcpy(client->login,username);
 	messaging_send_connect(socket, username);
+	//Warning, I had a bug if starting listening before the send_connect process.
+	client_start_listening(client);
 }
 
 

@@ -29,6 +29,7 @@
 // -----------------------------------------------------------------------------
 
 int messaging_send_connect(const int socket, const char *name);
+int messaging_send_confirm(const int socket);
 int messaging_send_error(const int socket, char *msg);
 
 

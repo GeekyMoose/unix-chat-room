@@ -12,6 +12,15 @@
 #include "client.h"
 
 
+//Used for thread
+struct thread_info{
+	pthread_t	id;
+	ClientData	*client;
+};
+
+// -----------------------------------------------------------------------------
+// Static functions (Privates)
+// -----------------------------------------------------------------------------
 static void display_console(ClientData *client){
 	fprintf(stdout, "Console.\n");
 	while(client->is_working == TRUE){
@@ -19,6 +28,21 @@ static void display_console(ClientData *client){
 	}
 }
 
+// Listen a socket, simple read it
+void *client_listen_socket(void *args){
+	struct thread_info *tinfo = (struct thread_info*)args;
+	char buffer[MSG_MAX_SIZE];
+	while(1){
+		//TODO CRIT: Add exit process
+		memset(buffer, 0x00, sizeof(buffer));
+		recv(tinfo->client->socket, buffer, MSG_MAX_SIZE, 0);
+		messaging_exec_client_receive(tinfo->client, tinfo->client->socket, buffer);
+	}
+}
+
+// -----------------------------------------------------------------------------
+// Public functions
+// -----------------------------------------------------------------------------
 int client_connect_to_server(ClientData *client, const char *address, const uint16_t port){
 	if(client->status == CONNECTED || client->status == CONNECTING){
 		fprintf(stderr, "You are already connected!\n");
@@ -35,6 +59,16 @@ int client_connect_to_server(ClientData *client, const char *address, const uint
 	client->socket	= socket;
 	fprintf(stdout, "Connection successfully done.\n");
 	return socket;
+}
+
+void client_start_listening(ClientData *client){
+	struct thread_info tinfo;
+	memset(&tinfo, 0x00, sizeof(tinfo));
+	pthread_t		thread_id;
+	tinfo.client	= client;
+	tinfo.id		= thread_id;
+	pthread_create(&thread_id, NULL, client_listen_socket, (void*)&tinfo);
+	pthread_detach(thread_id);
 }
 
 int main(int argc, char **argv){

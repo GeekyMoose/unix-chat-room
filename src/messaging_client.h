@@ -16,8 +16,8 @@
 #include <string.h>
 
 #include "wunixlib/stream.h"
-#include "user.h"
 #include "messaging.h"
+#include "client_data.h"
 
 
 // -----------------------------------------------------------------------------
@@ -25,8 +25,6 @@
 // -----------------------------------------------------------------------------
 
 /**
- * \todo		Not implemented yet
- *
  * \brief			Process the given message in client side.
  * \details			Recover the type of message from the given msg and execute
  * 					the action for that kind of message.
@@ -34,11 +32,12 @@
  * \note			This function is meant to be used by client side.
  * \warning			Message parameter will be altered and shouldn't be used anymore.
  *
+ * \param client	The client in charge of this communication
  * \param socket	The socket where message is from
  * \param msg		Message to process
  * \return			1 if successfully processed, otherwise, -1 (Unknown message)
  */
-int messaging_exec_client_receive(const int socket, const char *msg);
+int messaging_exec_client_receive(ClientData *client, const int socket,char *msg);
 
 #endif
 

@@ -33,6 +33,8 @@ static int messaging_server_exec_connect(ServerData *server, const int socket, c
 		return -1;
 	}
 	fprintf(stdout, "New user (%s) added in server\n", user_name);
+	fprintf(stdout, "Send registration confirmation to %s user\n", user_name);
+	messaging_send_confirm(socket);
 	return 1;
 }
 
