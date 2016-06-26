@@ -29,7 +29,7 @@
  */
 typedef struct _user{
 	int socket;
-	char login[USER_MAX_SIZE];
+	char login[USER_MAX_SIZE+1]; //+1 for '\0'
 } User;
 
 
@@ -44,29 +44,6 @@ typedef struct _user{
  * \return	1 if is valid, otherwise, return 0
  */
 int user_is_valid_name(const char *name);
-
-/**
- * \todo		Not implemented yet
- *
- * \brief	Check whether the given name is already used in the list
- *
- * \param list	List where to check.
- * \param name	User name
- * \return		1 if is already used yet in the list, otherwise, return 0
- */
-int user_is_used(const Linkedlist *list, const char *name);
-
-/**
- * \todo		Not implemented yet
- *
- * \brief		Send a whisper message to specific user.
- * \warning		Throw assert error if null param.
- *
- * \param sender	User who send the message
- * \param received	User who receive the message
- * \return			1 if successfully sent, otherwise, return -1
- */
-int user_send_whisper_message(User *sender, User *receiver);
 
 
 #endif

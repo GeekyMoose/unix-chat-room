@@ -20,7 +20,7 @@
 // name (For example, without !connect' for connection command)
 //------------------------------------------------------------------------------
 
-static void exec_connect(ClientData *client, char *str){
+static void commands_exec_connect(ClientData *client, char *str){
 	//If first elt is '\0', means no param given. Show usage
 	if(str[0] == '\0'){
 		fprintf(stderr, "Invalid command. Usage: !connect <username>@<server> [:port]\n");
@@ -58,6 +58,49 @@ static void exec_connect(ClientData *client, char *str){
 	client_start_listening(client);
 }
 
+static void commands_exec_open(ClientData *client, char *args){
+	//User must be connected
+	if(client->status != CONNECTED){
+		fprintf(stderr, "You must be connected to a server...\n");
+		return;
+	}
+
+	//Check whether room name is valid (Note: deeply done server side)
+	if(args == NULL || *args == '\n' || *args == '\0'){
+		fprintf(stderr, "Invalid command. Usage: !open <room_name>\n");
+		return;
+	}
+	//Send request
+	messaging_send_room_open(client->socket, args);
+}
+
+static void process_whisper(ClientData *client, char *msg){
+	//User must be connected to whisper
+	if(client->status != CONNECTED){
+		fprintf(stderr, "You must be connected to a server before using whisper...\n");
+		return;
+	}
+
+	//Check whether msg size is correct
+	if(strlen(msg) > CMD_MAX_SIZE){
+		fprintf(stderr, "Message is to long.");
+		return;
+	}
+
+	//Recover the receiver and the message to send
+	msg++; //Skip first *
+	char *receiver	= strtok(msg, "*");
+	char *value		= strtok(NULL, "");
+
+	//Receiver and value must be given
+	if(receiver == NULL || value == NULL){
+		fprintf(stderr, "Invalid command. Usage: *receiver* message\n");
+		return;
+	}
+	value = str_trim(value);
+	messaging_send_whisper(client->socket, client->login, receiver, value);
+}
+
 
 //------------------------------------------------------------------------------
 // Static functions
@@ -88,13 +131,14 @@ static void process_command(ClientData *client, char *cmd){
 
 	//Call function according to command received
 	if(strcmp(cmd_name, "connect") == 0){
-		exec_connect(client, args);
+		commands_exec_connect(client, args);
 	}
 	else if(strcmp(cmd_name, "bye") == 0){
 	}
 	else if(strcmp(cmd_name, "rooms") == 0){
 	}
 	else if(strcmp(cmd_name, "open") == 0){
+		commands_exec_open(client, args);
 	}
 	else if(strcmp(cmd_name, "close") == 0){
 	}
@@ -102,30 +146,12 @@ static void process_command(ClientData *client, char *cmd){
 	}
 	else if(strcmp(cmd_name, "leave") == 0){
 	}
+	else if(strcmp(cmd_name, "help") == 0){
+		commands_help();
+	}
 	else{
 		fprintf(stderr, "Unknown command...\n");
 	}
-}
-
-static void process_whisper(ClientData *client, char *msg){
-	//Check whether msg size is correct
-	if(strlen(msg) > CMD_MAX_SIZE){
-		fprintf(stderr, "Message is to long.");
-		return;
-	}
-
-	//Recover the receiver and the message to send
-	msg++; //Skip first *
-	char *receiver	= strtok(msg, "*");
-	char *value		= strtok(NULL, "");
-
-	//Receiver and value must be given
-	if(receiver == NULL || value == NULL){
-		fprintf(stderr, "Invalid command. Usage: *receiver* message\n");
-		return;
-	}
-	value = str_trim(value);
-	messaging_send_whisper(client->socket, client->login, receiver, value);
 }
 
 
@@ -163,3 +189,12 @@ void process_console_line(ClientData *client, char *str){
 	}
 	//Simple message to send to the server
 }
+
+void commands_help(void){
+	fprintf(stdout, "\nCommands:\n");
+	fprintf(stdout, "!connect <username>@<server> [:port]\n");
+	fprintf(stdout, "!open <room_name>\n");
+	fprintf(stdout, "*username* message\n");
+}
+
+

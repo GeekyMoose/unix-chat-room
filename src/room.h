@@ -12,6 +12,8 @@
 #ifndef UNIXPROJECT_ROOM_H
 #define UNIXPROJECT_ROOM_H
 
+#include <stdio.h>
+#include "constants.h"
 #include "user.h"
 
 
@@ -20,12 +22,11 @@
 // -----------------------------------------------------------------------------
 
 /**
- * \todo		Not implemented yet
- *
  * \brief Define a room component.
  */
 typedef struct _room{
-	//TODO
+	char name[ROOM_MAX_SIZE+1]; //+1 for '\0'
+	Linkedlist list_users; //List user in this room
 } Room;
 
 
@@ -34,13 +35,22 @@ typedef struct _room{
 // -----------------------------------------------------------------------------
 
 /**
- * \todo		Not implemented yet
- *
  * \brief		Initialize a room with default value.
- * \details		Room is set with empty list of user inside.
+ * \details		Room is set with empty list of user inside and empty name.
  * \warning		Throw assert error if null param.
+ *
+ * \param room	Room to initialize
  */
 void room_init(Room *room);
+
+/**
+ * \brief		Check whether the given name is valid for a room
+ * \details		Null name will return -1
+ *
+ * \param name	The name to test
+ * \return		1 if valid, otherwise, return -1
+ */
+int room_is_valid_name(const char *name);
 
 /**
  * \todo		Not implemented yet

@@ -25,7 +25,7 @@ int server_data_add_user(ServerData *server, User *user){
 		return -1;
 	}
 	//Check name is not used
-	if(user_is_used(&(server->list_users), user->login)){
+	if(server_data_name_is_used(&(server->list_users), user->login) == 1){
 		return -2;
 	}
 	//Add name in server
@@ -33,6 +33,28 @@ int server_data_add_user(ServerData *server, User *user){
 	return 1;
 }
 
+int server_data_name_is_used(const Linkedlist *list, const char *name){
+	//TODO To implements (Atm, says user is not in list in all case)
+	return 0;
+}
+
+int server_data_add_room(ServerData *server, User *user, const char *name){
+	//Check valid name
+	if(room_is_valid_name(name) == -1){
+		return -1;
+	}
+	//Check name used in server
+	if(server_data_room_is_used(&(server->list_rooms), name) == 1){
+		return -2;
+	}
+	//Add room in server
+	return 1;
+}
+
+int server_data_room_is_used(const Linkedlist *list, const char *name){
+	//TODO
+	return 0;
+}
 
 // -----------------------------------------------------------------------------
 // List function implementations

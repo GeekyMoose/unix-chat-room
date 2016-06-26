@@ -18,8 +18,9 @@
 
 #include "wunixlib/stream.h"
 #include "server_data.h"
-#include "user.h"
 #include "messaging.h"
+#include "room.h"
+#include "user.h"
 
 
 // -----------------------------------------------------------------------------

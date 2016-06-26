@@ -44,6 +44,12 @@ void prompt_cmd(ClientData *client);
 void process_console_line(ClientData *client, char *str);
 
 
+/**
+ * \brief Display all available commands
+ */
+void commands_help(void);
+
+
 #endif
 
 

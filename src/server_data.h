@@ -17,6 +17,7 @@
 #include "wunixlib/linkedlist.h"
 #include "constants.h"
 #include "user.h"
+#include "room.h"
 
 
 // -----------------------------------------------------------------------------
@@ -32,6 +33,7 @@ typedef struct _server_data{
 	volatile sig_atomic_t is_listening;
 	volatile sig_atomic_t is_working;
 	Linkedlist list_users; //List of connected users.
+	Linkedlist list_rooms;
 } ServerData;
 
 
@@ -56,6 +58,36 @@ void server_data_init(ServerData *server);
  * \return			1 if successfully added, -1 if invalid name, -2 if already in server
  */
 int server_data_add_user(ServerData *server, User *user);
+
+/**
+ * \brief		Check whether the given name is already used in the server
+ *
+ * \param list	List where to check.
+ * \param name	User name
+ * \return		1 if is already used yet in the list, otherwise, return 0
+ */
+int server_data_name_is_used(const Linkedlist *list, const char *name);
+
+/**
+ * \brief		Add a room in the server.
+ * \details		Room shoudln't be in the server already.
+ * \warning		Not Null parameters expected
+ *
+ * \param server	Server where to add room
+ * \param user		User owner of this room
+ * \param			Name to give for this room
+ * \return			1 if successfully added, -1 if invalid name, -2 if already in server
+ */
+int server_data_add_room(ServerData *server, User *user, const char *name);
+
+/**
+ * \brief		Check whether the given name is already used by a room in server.
+ *
+ * \param list	List of rooms in server.
+ * \param name	Name to check
+ * \return		1 if is already used, otherwise, return 0
+ */
+int server_data_room_is_used(const Linkedlist *list, const char *name);
 
 
 // -----------------------------------------------------------------------------
