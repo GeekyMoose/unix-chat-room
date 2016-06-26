@@ -68,7 +68,7 @@ int messaging_send_error(const int socket, char *type, char *msg){
 	return 1;
 }
 
-int messaging_send_whiper(const int socket, const char *sender, const char *receiver, const char *msg){
+int messaging_send_whisper(const int socket, const char *sender, const char *receiver, const char *msg){
 	char *cmd		= "whisper"MSG_DELIMITER;
 	char *buffer	= NULL;
 	buffer = (char*)malloc(sizeof(char) * (strlen(cmd)+strlen(msg)+strlen(sender)+strlen(receiver)));

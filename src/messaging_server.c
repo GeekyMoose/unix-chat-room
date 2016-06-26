@@ -15,32 +15,31 @@
 // -----------------------------------------------------------------------------
 // Static function for server message execution
 // -----------------------------------------------------------------------------
-static int messaging_server_exec_connect(ServerData *server, const int socket, const char *user_name){
-	User new_user;
-	new_user.socket = socket;
-	strcpy(new_user.login, user_name);
-	int errstatus = server_data_add_user(server, &new_user);
+static int messaging_server_exec_connect(ServerData *server, User *user, const char *user_name){
+	strcpy(user->login, user_name);
+	int errstatus = server_data_add_user(server, user);
 	//If invalid name
 	if(errstatus == -1){
 		fprintf(stderr, "Connect requested with invalid name: %s\n", user_name);
-		messaging_send_error(socket, MSG_ERR_CONNECT, "Name is not valid.");
+		messaging_send_error(user->socket, MSG_ERR_CONNECT, "Name is not valid.");
 		return -1;
 	}
 	//If user already in server
 	else if(errstatus == -2){
 		fprintf(stderr, "Connect requested but name already used: %s\n", user_name);
-		messaging_send_error(socket, MSG_ERR_CONNECT,  "Name is already used.");
+		messaging_send_error(user->socket, MSG_ERR_CONNECT,  "Name is already used.");
 		return -1;
 	}
-	fprintf(stdout, "New user (%s) added in server\n", user_name);
-	fprintf(stdout, "Send registration confirmation to %s user\n", user_name);
-	messaging_send_confirm(socket);
+	fprintf(stdout, "New user (%s) added in server (Sending confirmation)\n", user_name);
+	fprintf(stdout, "Current user list:\n");
+	list_iterate(&(server->list_users), server_data_user_display);
+	messaging_send_confirm(user->socket);
 	return 1;
 }
 
-static int messaging_server_exec_whiper(ServerData *server, char *sender, char *receiver, char *msg){
+static int messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){
 	//Check valid message parameters (not null)
-	if(sender == NULL || receiver == NULL || msg == NULL){
+	if(user == NULL || receiver == NULL || msg == NULL){
 		fprintf(stderr, "[ERR] Invalid whisper message (NULL data)\n");
 		return -1;
 	}
@@ -53,10 +52,14 @@ static int messaging_server_exec_whiper(ServerData *server, char *sender, char *
 	}
 
 	//Recover the receiver from list of user (Send error if wrong)
-	//TODO
+	User *u = list_get_where(&(server->list_users), receiver, server_data_user_match_name);
+	if(u == NULL){
+		messaging_send_error(user->socket, MSG_ERR_UNKOWN_USER, "User doesn't exists");
+		return -1;
+	}
 
 	//@TODO add mutex for writing in socket
-	fprintf(stdout, "DEBUG: Whiper received: '%s' '%s' '%s'\n", sender, receiver, msg);
+	messaging_send_whisper(u->socket, user->login, receiver, msg);
 }
 
 
@@ -64,7 +67,7 @@ static int messaging_server_exec_whiper(ServerData *server, char *sender, char *
 // Receive process Functions
 // -----------------------------------------------------------------------------
 
-int messaging_exec_server_receive(ServerData *server, const int socket, char *msg){
+int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
 	if(msg == NULL){ return -1; }
 
 	//Recover the type of message (First element in msg, must be not NULL)
@@ -73,13 +76,15 @@ int messaging_exec_server_receive(ServerData *server, const int socket, char *ms
 
 	//Process each possible message
 	if(strcmp(token, "connect") == 0){
-		messaging_server_exec_connect(server, socket, strtok(NULL, MSG_DELIMITER));
+		messaging_server_exec_connect(server, user, strtok(NULL, MSG_DELIMITER));
+		return 1;
 	}
 	else if(strcmp(token, "whisper") == 0){
 		char *sender	= strtok(NULL, MSG_DELIMITER);
 		char *receiver	= strtok(NULL, MSG_DELIMITER);
 		char *msg		= strtok(NULL, MSG_DELIMITER);
-		messaging_server_exec_whiper(server, sender, receiver, msg);
+		messaging_server_exec_whisper(server, user, receiver, msg);
+		return 1;
 	}
 	return -1; //Means no message match
 }

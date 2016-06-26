@@ -30,6 +30,7 @@
  */
 typedef struct _server_data{
 	volatile sig_atomic_t is_listening;
+	volatile sig_atomic_t is_working;
 	Linkedlist list_users; //List of connected users.
 } ServerData;
 
@@ -55,6 +56,32 @@ void server_data_init(ServerData *server);
  * \return			1 if successfully added, -1 if invalid name, -2 if already in server
  */
 int server_data_add_user(ServerData *server, User *user);
+
+
+// -----------------------------------------------------------------------------
+// List function implementations
+// -----------------------------------------------------------------------------
+
+/**
+ * \brief		Used for list.
+ * \details		Check whether name given match user name from list.
+ * \details		See wunixlib/Linkedlist documentation for further informations.
+ *
+ * \param user	User tested
+ * \param name	Name to test
+ * \return		1 if match, otherwise, return 0
+ */
+int server_data_user_match_name(void *user, void*name);
+
+/**
+ * \brief		Display one user data.
+ * \details		Meant to be used as iterate function for list.
+ * 				User can be null (Null will be displayed).
+ *
+ * \param user	Void pointer to user
+ * \return		1
+ */
+int server_data_user_display(void* user);
 
 
 #endif

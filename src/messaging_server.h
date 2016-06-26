@@ -36,11 +36,11 @@
  * \warning			Server shouldn't be null.
  *
  * \param server	Server used
- * \param socket	The socket where message is from
+ * \param user		User who sent the message
  * \param msg		Message to process
  * \return			1 if successfully processed, otherwise, -1 (Unknown message)
  */
-int messaging_exec_server_receive(ServerData *server, const int socket, char *msg);
+int messaging_server_exec_receive(ServerData *server, User *user, char *msg);
 
 
 #endif

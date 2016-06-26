@@ -13,9 +13,8 @@
 
 
 struct thread_info{
-	User		*user;
+	int			socket;
 	ServerData	*server;
-	pthread_t	id;
 };
 
 
@@ -23,14 +22,28 @@ struct thread_info{
 // Client management functions
 // -----------------------------------------------------------------------------
 void *client_handler(void *args){
+	//Recover parameters
 	fprintf(stdout, "New client request.\n");
 	struct thread_info *tinfo = (struct thread_info*)args;
 	char buff[MSG_MAX_SIZE];
-	while(1){
+
+	//Create the new client user
+	ServerData *server = tinfo->server;
+	User *user;
+	user = malloc(sizeof(User));
+	memset(user, 0x00, sizeof(User));
+	if(user == NULL){
+		fprintf(stderr, "Unable to create the user for socket %d\n", tinfo->socket);
+		pthread_exit(NULL);
+	}
+	user->socket = tinfo->socket;
+
+	//Listen for message
+	while(server->is_working == 1){
 		//TODO CRIT: Add exit process
 		memset(buff, 0x00, sizeof(buff));
-		recv(tinfo->user->socket, buff, MSG_MAX_SIZE, 0);
-		messaging_exec_server_receive(tinfo->server, tinfo->user->socket, buff);
+		recv(user->socket, buff, MSG_MAX_SIZE, 0);
+		messaging_server_exec_receive(server, user, buff);
 	}
 }
 
@@ -49,13 +62,9 @@ void server_start_listening_clients(ServerData *server, const int socket){
 		//Create thread args
 		struct thread_info tinfo;
 		pthread_t thread_id;
-		User client;
-		memset(&client, 0x00, sizeof(client));
 		memset(&tinfo, 0x00, sizeof(tinfo));
-		client.socket	= client_socket;
-		tinfo.user		= &client;
 		tinfo.server	= server;
-		tinfo.id		= thread_id;
+		tinfo.socket	= client_socket;
 		pthread_create(&thread_id, NULL, client_handler, (void*)&tinfo);
 		pthread_detach(thread_id);
 	}
@@ -76,7 +85,8 @@ void server_stop_listening_clients(ServerData *server){
 // -----------------------------------------------------------------------------
 
 static void siginthandler(ServerData *server, int sig){
-	server_stop_listening_clients(server); //TODO
+	server_stop_listening_clients(server);
+	server->is_working = 0;
 }
 
 static void usage(char *name){

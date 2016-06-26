@@ -125,7 +125,7 @@ static void process_whisper(ClientData *client, char *msg){
 		return;
 	}
 	value = str_trim(value);
-	messaging_send_whiper(client->socket, client->login, receiver, value);
+	messaging_send_whisper(client->socket, client->login, receiver, value);
 }
 
 

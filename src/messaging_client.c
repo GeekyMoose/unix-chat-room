@@ -15,12 +15,16 @@
 // -----------------------------------------------------------------------------
 // Static function for server message execution
 // -----------------------------------------------------------------------------
-static int messaging_client_exec_confirm(ClientData *client){
+static int messaging_client_receiv_confirm(ClientData *client){
 	fprintf(stdout, "\nUser (%s) successfully registered in server.\n", client->login);
 	client->status = CONNECTED;
 }
 
-static int messaging_client_exec_error(ClientData *client, char *type, char *msg){
+static int messaging_client_receiv_whisper(ClientData *client, char *sender, char *msg){
+	fprintf(stdout, "\nwhisper [%s]: '%s'\n", sender, msg);
+}
+
+static int messaging_client_receiv_error(ClientData *client, char *type, char *msg){
 	//MSG_ERR_CONNECT
 	if(strcmp(type, MSG_ERR_CONNECT) == 0){
 		fprintf(stderr, "\nUnable to connect: %s\n", msg);
@@ -47,12 +51,18 @@ int messaging_exec_client_receive(ClientData *client, const int socket, char *ms
 
 	//Process each possible message
 	if(strcmp(token,"confirm") == 0){
-		messaging_client_exec_confirm(client);
+		messaging_client_receiv_confirm(client);
+	}
+	else if(strcmp(token, "whisper") == 0){
+		char *sender	= strtok(NULL, MSG_DELIMITER);
+		char *receiver	= strtok(NULL, MSG_DELIMITER);
+		char *msg		= strtok(NULL, MSG_DELIMITER);
+		messaging_client_receiv_whisper(client, sender, msg);
 	}
 	else if(strcmp(token, "error") == 0){
 		char *type	= strtok(NULL, MSG_DELIMITER);
 		char *msg	= strtok(NULL, MSG_DELIMITER);
-		messaging_client_exec_error(client, type, msg);
+		messaging_client_receiv_error(client, type, msg);
 	}
 	return -1; //Means no message match
 }
