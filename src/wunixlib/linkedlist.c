@@ -114,3 +114,33 @@ void* list_getlast(const Linkedlist *list){
 	assert(list != NULL);
 	return list->last->data;
 }
+
+int list_contains_where(const Linkedlist *list, void* value, compfct f){
+	assert(list != NULL);
+	assert(value != NULL);
+	assert(f != NULL);
+	//Browse each element and check
+	LinkedlistNode *current = list->first;
+	while(current != NULL){
+		if(f(current->data, value) == 1){
+			return 1;
+		}
+		current = current->next;
+	}
+	return 0;
+}
+
+void* list_get_where(const Linkedlist *list, void* value, compfct f){
+	assert(list != NULL);
+	assert(value != NULL);
+	assert(f != NULL);
+	//Browse each element and check
+	LinkedlistNode *current = list->first;
+	while(current != NULL){
+		if(f(current->data, value) == 1){
+			return current->data;
+		}
+		current = current->next;
+	}
+	return NULL;
+}

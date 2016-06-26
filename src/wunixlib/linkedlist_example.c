@@ -16,27 +16,61 @@
 #include "linkedlist.h"
 
 
-typedef struct _a{
-	char*name;
-	int id;
-}user;
+typedef struct _example_user{
+	char*	name;
+	int		id;
+} user;
 
 int display_player(void *data){
-	user u = *(struct _a*)data;
+	if(data == NULL){
+		fprintf(stdout, "User pointer is null...\n");
+		return 1;
+	}
+	user u = *(struct _example_user*)data;
 	fprintf(stdout, "User name: %s / ID: %d\n", u.name, u.id);
 	return 1;
+}
+
+int match_name(void *data, void *name){
+	user u = *(struct _example_user*)data;
+	name = (char*)name;
+	if(strcmp(u.name, name) == 0){
+		return 1;
+	}
+	return 0;
 }
 
 void test_struct_list(){
 	Linkedlist list;
 	list_init(&list, NULL);
 
-	user u1 = {"User 1", 1};
-	user u2 = {"User 2", 2};
+	user u1 = {"User1", 1};
+	user u2 = {"User2", 2};
 	list_append(&list, &u1);
 	list_append(&list, &u2);
 
 	list_iterate(&list, display_player);
+
+	//Test list_contains_where
+	char *retval;
+	retval = (list_contains_where(&list, "User1", match_name)) ? "TRUE" : "FALSE";
+	fprintf(stdout, "Contains 'User1'? : %s\n", retval);
+	retval = (list_contains_where(&list, "User4", match_name)) ? "TRUE" : "FALSE";
+	fprintf(stdout, "Contains 'User4'? : %s\n", retval);
+
+	//Test list_get_where
+	fprintf(stdout, "Get user\n");
+	user *ptr_u = NULL;
+
+	ptr_u = list_get_where(&list, "User1", match_name);
+	fprintf(stdout, "User1 find: ");
+	display_player((void*)ptr_u);
+
+	ptr_u = list_get_where(&list, "User4", match_name);
+	fprintf(stdout, "User4 find: ");
+	display_player((void*)ptr_u);
+
+	//Finish
 	list_clear(&list);
 }
 

@@ -17,7 +17,7 @@
  * 				destroying the list.
  *
  * \bug			In case of non dynamic variable passed to the list (Like a simple
- * 				int), the list will keep a pointer to this int.
+ * 				integer), the list will keep a pointer to this int.
  * 				Do not use the same int variable to set several element!
  * 				Example (Of code you shouldn't use):
  * 				<br/><br/>
@@ -39,20 +39,42 @@
 #include <assert.h>
 
 
-
-
 // -----------------------------------------------------------------------------
-// Structures / Data
+// Structure functions definition
 // -----------------------------------------------------------------------------
 
-/** \brief Function to define how to free an element in the list. */
+/**
+ * \brief	Function to define how to free an element in the list.
+ * \details	This function can be null and won't be called.
+ *
+ * \param	Data of the element
+ */
 typedef void(*freefct)(void*);
 
 /**
  * \brief	Function that iterate a list.
  * \details	Iterate while iterator return 1
+ *
+ * \param	Data of the element
  */
 typedef int(*iteratorfct)(void*);
+
+/**
+ * \brief			Compare 2 elements.
+ * \details			Function that define the rule for element to match value.
+ * 					First parameter will always be filled with current tested element 
+ * 					from the list. Second parameter will be filled by the value parameter.
+ *
+ * \param current	The current element tested
+ * \param value		Value tested
+ * \return			1 if current match the value, otherwise, return 0
+ */
+typedef int(*compfct)(void* current, void* value);
+
+
+// -----------------------------------------------------------------------------
+// Structures / Data
+// -----------------------------------------------------------------------------
 
 /** \brief Define a linked list node. */
 typedef struct _linkedlistNode{
@@ -70,7 +92,7 @@ typedef struct _linkedlist{
 
 
 // -----------------------------------------------------------------------------
-// Functions
+// Functions prototypes
 // -----------------------------------------------------------------------------
 
 /**
@@ -167,6 +189,35 @@ void* list_getfirst(const Linkedlist *list);
  * \return 		Pointer to the last element
  */
 void* list_getlast(const Linkedlist *list);
+
+/**
+ * \brief		Check whether the element is in the list.
+ * \details		2 elements are considered same according to the compfct implementation.
+ * \warning		If list is NULL, assert error thrown.
+ * \warning		If value is NULL, assert error thrown.
+ * \warning		If function is NULL, assert error thrown.
+ *
+ * \param list	List where to look for
+ * \param value	Element to check
+ * \param f		Function used to check if element match the value (See compfct doc)
+ * \return		1 if contains, otherwise, return 0
+ */
+int list_contains_where(const Linkedlist *list, void* value, compfct f);
+
+/**
+ * \brief		Get the element from the list that match the given test function.
+ * \details		Iterate the list and return the first element that satisfied 
+ * 				the compfct implementation (Given as parameter).
+ * \warning		If list is NULL, assert error thrown.
+ * \warning		If value is NULL, assert error thrown.
+ * \warning		If function is NULL, assert error thrown.
+ *
+ * \param list	List where to look for
+ * \param value	Value to match
+ * \param f		Function used to check if match (See compfct doc)
+ * \return		The element if found, otherwise, return NULL
+ */
+void* list_get_where(const Linkedlist *list, void* value, compfct f);
 
 
 #endif
