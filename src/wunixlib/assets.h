@@ -13,6 +13,7 @@
 #define WUNIXLIB_ASSETS_H
 
 #include <stdio.h>
+#include <assert.h>
 
 
 // ----------------------------------------------------------------------------
@@ -71,6 +72,15 @@ int readline_stdin(char buff[], int size);
  */
 void clear_buffer();
 
+/**
+ * \brief		Remove the first space characters from the string
+ * \details		Simple implementation of trim for first characters
+ * \warning		Assert error thrown if str is NULL.
+ *
+ * \param str	String to trim
+ * \return		Pointer to the new first position in the string
+ */
+char* str_trim(char *str);
 
 #endif
 

@@ -29,3 +29,11 @@ void clear_buffer(){
 	char c;
 	while( (c=getchar()) != EOF && c != '\n');
 }
+
+char* str_trim(char *str){
+	assert(str != NULL);
+	while(*str == ' '){
+		str++;
+	}
+	return str;
+}

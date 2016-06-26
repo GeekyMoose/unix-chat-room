@@ -17,8 +17,8 @@
 #define USER_MAX_SIZE 32
 #define USER_MIN_SIZE 6
 
-#define CMD_MAX_SIZE 255
-#define MSG_MAX_SIZE 500
+#define CMD_MAX_SIZE 500 //Size of command enterred by user
+#define MSG_MAX_SIZE 600 //Size of message throught network
 
 #endif
 

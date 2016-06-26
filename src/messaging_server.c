@@ -38,6 +38,27 @@ static int messaging_server_exec_connect(ServerData *server, const int socket, c
 	return 1;
 }
 
+static int messaging_server_exec_whiper(ServerData *server, char *sender, char *receiver, char *msg){
+	//Check valid message parameters (not null)
+	if(sender == NULL || receiver == NULL || msg == NULL){
+		fprintf(stderr, "[ERR] Invalid whisper message (NULL data)\n");
+		return -1;
+	}
+
+	//Message shouldn't be empty (Or just spaces)
+	msg = str_trim(msg);
+	if(strlen(msg) == 0){
+		fprintf(stderr, "[ERR] Invalid whisper message (Empty message)\n");
+		return -1;
+	}
+
+	//Recover the receiver from list of user (Send error if wrong)
+	//TODO
+
+	//@TODO add mutex for writing in socket
+	fprintf(stdout, "DEBUG: Whiper received: '%s' '%s' '%s'\n", sender, receiver, msg);
+}
+
 
 // -----------------------------------------------------------------------------
 // Receive process Functions
@@ -51,8 +72,14 @@ int messaging_exec_server_receive(ServerData *server, const int socket, char *ms
 	if(token == NULL){ return -1; }
 
 	//Process each possible message
-	if(strcmp(token,"connect") == 0){
+	if(strcmp(token, "connect") == 0){
 		messaging_server_exec_connect(server, socket, strtok(NULL, MSG_DELIMITER));
+	}
+	else if(strcmp(token, "whisper") == 0){
+		char *sender	= strtok(NULL, MSG_DELIMITER);
+		char *receiver	= strtok(NULL, MSG_DELIMITER);
+		char *msg		= strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_whiper(server, sender, receiver, msg);
 	}
 	return -1; //Means no message match
 }

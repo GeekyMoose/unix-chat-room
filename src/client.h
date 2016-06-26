@@ -43,6 +43,13 @@
  */
 int client_connect_to_server(ClientData *client, const char *address, const uint16_t port);
 
+/**
+ * \brief			Start listening any message from client socket.
+ * \warning			Should be called one time only. 
+ * 					(Undefined result if called several times)
+ *
+ * \param client	Client who start listening
+ */
 void client_start_listening(ClientData *client);
 #endif
 

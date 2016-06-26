@@ -107,8 +107,25 @@ static void process_command(ClientData *client, char *cmd){
 	}
 }
 
-static void process_whisper(char *msg){
-	//TODO
+static void process_whisper(ClientData *client, char *msg){
+	//Check whether msg size is correct
+	if(strlen(msg) > CMD_MAX_SIZE){
+		fprintf(stderr, "Message is to long.");
+		return;
+	}
+
+	//Recover the receiver and the message to send
+	msg++; //Skip first *
+	char *receiver	= strtok(msg, "*");
+	char *value		= strtok(NULL, "");
+
+	//Receiver and value must be given
+	if(receiver == NULL || value == NULL){
+		fprintf(stderr, "Invalid command. Usage: *receiver* message\n");
+		return;
+	}
+	value = str_trim(value);
+	messaging_send_whiper(client->socket, client->login, receiver, value);
 }
 
 
@@ -141,7 +158,7 @@ void process_console_line(ClientData *client, char *str){
 	}
 	//Whipser to specific user
 	else if(is_whisper(str) == TRUE){
-		process_whisper(str);
+		process_whisper(client, str);
 		return;
 	}
 	//Simple message to send to the server

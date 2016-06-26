@@ -35,7 +35,7 @@
 void prompt_cmd(ClientData *client);
 
 /**
- * \brief			Process the received string from the console
+ * \brief			Process a command line.
  * \details			String can be a simple message, a command, a whisper.
  *
  * \param client	Client who wrote the line

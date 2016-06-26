@@ -23,14 +23,17 @@
 // Send functions
 //
 // I didn't write doc for these functions. The working process is simple:
-// each function send to the given socket a specific message (With right format, 
-// with the right delimiter etc).
+// each function send to the given socket a specific message
+// Message is formated using a defined format and delimiter etc.
 // Each message send -1 if error, otherwise, 1
+//
+// Warning: atm, any parameter test is done and parameter should be valid (Not null etc)
 // -----------------------------------------------------------------------------
 
 int messaging_send_connect(const int socket, const char *name);
 int messaging_send_confirm(const int socket);
 int messaging_send_error(const int socket, char *msg);
+int messaging_send_whiper(const int socket, const char *sender, const char *receiver, const char *msg);
 
 
 #endif

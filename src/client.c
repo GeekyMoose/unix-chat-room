@@ -28,7 +28,7 @@ static void display_console(ClientData *client){
 	}
 }
 
-// Listen a socket, simple read it
+// Listen a socket, simple read it (Meant to be used as thread function)
 void *client_listen_socket(void *args){
 	struct thread_info *tinfo = (struct thread_info*)args;
 	char buffer[MSG_MAX_SIZE];

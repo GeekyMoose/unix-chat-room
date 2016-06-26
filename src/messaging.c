@@ -19,7 +19,7 @@
 int messaging_send_connect(const int socket, const char *name){
 	char *cmd		= "connect"MSG_DELIMITER; //Add delimiter at end
 	char *buffer	= NULL;
-	buffer = (char*)malloc(sizeof(char) * strlen(cmd) + strlen(name));
+	buffer = (char*)malloc(sizeof(char) * (strlen(cmd)+strlen(name)));
 	//Check if malloc failed.
 	if(buffer == NULL){
 		fprintf(stderr, "[ERR] Internal error occured. Unable to malloc (%s:%d)\n", __FILE__, __LINE__);
@@ -52,7 +52,7 @@ int messaging_send_confirm(const int socket){
 int messaging_send_error(const int socket, char *msg){
 	char *cmd		= "error"MSG_DELIMITER;
 	char *buffer	= NULL;
-	buffer = (char*)malloc(sizeof(char) * strlen(msg));
+	buffer = (char*)malloc(sizeof(char) * (strlen(cmd)+strlen(msg)));
 	//Check if malloc failed.
 	if(buffer == NULL){
 		fprintf(stderr, "[ERR] Internal error occured. Unable to malloc (%s:%d)\n", __FILE__, __LINE__);
@@ -64,3 +64,26 @@ int messaging_send_error(const int socket, char *msg){
 	bulk_write(socket, buffer, strlen(buffer));
 	return 1;
 }
+
+int messaging_send_whiper(const int socket, const char *sender, const char *receiver, const char *msg){
+	char *cmd		= "whisper"MSG_DELIMITER;
+	char *buffer	= NULL;
+	buffer = (char*)malloc(sizeof(char) * (strlen(cmd)+strlen(msg)+strlen(sender)+strlen(receiver)));
+	//Check if malloc failed.
+	if(buffer == NULL){
+		fprintf(stderr, "[ERR] Internal error occured. Unable to malloc (%s:%d)\n", __FILE__, __LINE__);
+		return -1;
+	}
+	//Create the message (Possible update: check if fct failed)
+	strcpy(buffer, cmd);
+	strcat(buffer, sender);
+	strcat(buffer, MSG_DELIMITER);
+	strcat(buffer, receiver);
+	strcat(buffer, MSG_DELIMITER);
+	strcat(buffer, msg);
+	bulk_write(socket, buffer, strlen(buffer));
+	return 1;
+}
+
+
+
