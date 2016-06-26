@@ -38,7 +38,7 @@ static void messaging_server_exec_connect(ServerData *server, User *user, const 
 	fprintf(stdout, "New user (%s) added in server (Sending confirmation)\n", user_name);
 	fprintf(stdout, "Current user list:\n");
 	list_iterate(&(server->list_users), user_display);
-	messaging_send_confirm(user->socket, "You have been successfully registered in server");
+	messaging_send_confirm(user->socket, MSG_CONF_REGISTER, "You have been successfully registered in server");
 	return;
 }
 
@@ -55,25 +55,25 @@ static void messaging_server_exec_open_room(ServerData *server, User *user, char
 	//Invalid name
 	if(errstatus == -1){
 		fprintf(stderr, "Invalid open message: room name '%s'\n", name);
-		messaging_send_error(user->socket, MSG_GENERAL_ERR, "Invalid room name.");
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name.");
 		return;
 	}
 	//Room already used on server
 	else if(errstatus == -2){
 		fprintf(stderr, "Invalid open message: room name '%s' already used.\n", name);
-		messaging_send_error(user->socket, MSG_GENERAL_ERR, "Invalid room name: already used.");
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name: already used.");
 		return;
 	}
 	//Malloc error
 	else if(errstatus == 0){
 		fprintf(stderr, "Unable to create room '%s': internal error (malloc).\n", name);
-		messaging_send_error(user->socket, MSG_GENERAL_ERR, "Sorry, we are unable to create the room.");
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Sorry, we are unable to create the room.");
 		return;
 	}
 	fprintf(stdout, "New room created: '%s' (Owner: '%s')\n", name, user->login);
 	fprintf(stdout, "Current rooms:\n");
 	list_iterate(&(server->list_rooms), room_display);
-	messaging_send_confirm(user->socket, "Room successfully created");
+	messaging_send_confirm(user->socket, MSG_CONF_GENERAL, "Room successfully created");
 }
 
 static void  messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){

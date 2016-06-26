@@ -25,7 +25,11 @@
 // List of possible error value
 #define MSG_ERR_CONNECT "msg_err_connect"
 #define MSG_ERR_UNKOWN_USER "msg_err_unknown_user"
-#define MSG_GENERAL_ERR "msg_general_err"
+#define MSG_ERR_GENERAL "msg_err_general"
+
+// List of possible confirm value
+#define MSG_CONF_REGISTER "msg_conf_register"
+#define MSG_CONF_GENERAL "msg_conf_general"
 
 // -----------------------------------------------------------------------------
 // Send functions
@@ -39,7 +43,7 @@
 // -----------------------------------------------------------------------------
 
 int messaging_send_connect(const int socket, const char *name);
-int messaging_send_confirm(const int socket, const char *msg);
+int messaging_send_confirm(const int socket, char *type, const char *msg);
 int messaging_send_error(const int socket, char *type, char *msg);
 int messaging_send_whisper(const int socket, const char *sender, const char *receiver, const char *msg);
 int messaging_send_room_open(const int socket, const char *name);

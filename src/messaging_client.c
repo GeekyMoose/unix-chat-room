@@ -15,8 +15,10 @@
 // -----------------------------------------------------------------------------
 // Static function for server message execution
 // -----------------------------------------------------------------------------
-static int messaging_client_receiv_confirm(ClientData *client, const char *msg){
-	client->status = CONNECTED; //TODO used only at the first confirm when registered
+static int messaging_client_receiv_confirm(ClientData *client, char* type, const char *msg){
+	if(strcmp(type, MSG_CONF_REGISTER) == 0){
+		client->status = CONNECTED;
+	}
 	fprintf(stdout, "\n%s\n", msg);
 }
 
@@ -51,7 +53,9 @@ int messaging_exec_client_receive(ClientData *client, const int socket, char *ms
 
 	//Process each possible message
 	if(strcmp(token,"confirm") == 0){
-		messaging_client_receiv_confirm(client, strtok(NULL, MSG_DELIMITER));
+		char *type	= strtok(NULL, MSG_DELIMITER);
+		char *msg	= strtok(NULL, MSG_DELIMITER);
+		messaging_client_receiv_confirm(client, type, msg);
 	}
 	else if(strcmp(token, "whisper") == 0){
 		char *sender	= strtok(NULL, MSG_DELIMITER);
