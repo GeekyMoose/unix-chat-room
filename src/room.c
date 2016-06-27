@@ -56,7 +56,7 @@ int room_add_user(Room *room, User *user){
 		return -1;
 	}
 	list_append(&(room->list_users), user);
-	user->room = room->name; //Also keep this data in user
+	strcpy(user->room, room->name);
 }
 
 int room_remove_user(Room *room, User *user){
@@ -67,7 +67,7 @@ int room_remove_user(Room *room, User *user){
 		return -1;
 	}
 	list_remove_where(&(room->list_users), user->login, user_match_name);
-	user->room = NULL; //Remove room from user data
+	strcpy(user->room, ""); //Remove room from user data
 }
 
 void room_broadcast_message(Room *room, User *user, const char* msg){

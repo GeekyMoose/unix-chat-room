@@ -19,6 +19,9 @@ static int messaging_client_receiv_confirm(ClientData *client, char* type, const
 	if(strcmp(type, MSG_CONF_REGISTER) == 0){
 		client->status = CONNECTED;
 	}
+	else if(strcmp(type, MSG_CONF_ROOM_ENTER) == 0){
+		//TODO could change the current room name in local
+	}
 	fprintf(stdout, "\n%s\n", msg);
 }
 

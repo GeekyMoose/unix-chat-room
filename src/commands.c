@@ -74,6 +74,22 @@ static void commands_exec_open(ClientData *client, char *args){
 	messaging_send_room_open(client->socket, args);
 }
 
+static void commands_exec_enter(ClientData *client, char *args){
+	if(client->status != CONNECTED){
+		fprintf(stderr, "You must be connected to a server...\n");
+		return;
+	}
+
+	//Check whether room name is valid (Note: deeply done server side)
+	if(args == NULL || *args == '\n' || *args == '\0'){
+		fprintf(stderr, "Invalid command. Usage: !enter <room_name>\n");
+		return;
+	}
+
+	//Send request
+	messaging_send_room_enter(client->socket, str_trim(args));
+}
+
 static void process_whisper(ClientData *client, char *msg){
 	//User must be connected to whisper
 	if(client->status != CONNECTED){
@@ -166,6 +182,7 @@ static void process_command(ClientData *client, char *cmd){
 	else if(strcmp(cmd_name, "close") == 0){
 	}
 	else if(strcmp(cmd_name, "enter") == 0){
+		commands_exec_enter(client, args);
 	}
 	else if(strcmp(cmd_name, "leave") == 0){
 	}
@@ -218,6 +235,7 @@ void commands_help(void){
 	fprintf(stdout, "\nCommands:\n");
 	fprintf(stdout, "!connect <username>@<server> [:port]\n");
 	fprintf(stdout, "!open <room_name>\n");
+	fprintf(stdout, "!enter <room_name>\n");
 	fprintf(stdout, "*username* message\n");
 }
 

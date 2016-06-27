@@ -50,7 +50,7 @@ int user_display(void* user){
 		return 1;
 	}
 	User u = *(User*) user;
-	fprintf(stdout, "User '%s' (Room: %s) / socket '%d' \n", u.login, u.room, u.socket);
+	fprintf(stdout, "User '%s' %p (Room: %s) / socket '%d' \n", u.login, &u, u.room, u.socket);
 	return 1;
 }
 

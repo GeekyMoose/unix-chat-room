@@ -16,6 +16,7 @@
 // Static function for server message execution
 // -----------------------------------------------------------------------------
 static void messaging_server_exec_connect(ServerData *server, User *user, const char *user_name){
+	//name must be not null
 	if(user_name == NULL){
 		fprintf(stderr, "Connect requested with invalid name (NULL)\n");
 		messaging_send_error(user->socket, MSG_ERR_CONNECT, "Name is not valid.");
@@ -37,9 +38,15 @@ static void messaging_server_exec_connect(ServerData *server, User *user, const 
 	}
 
 	//Place user in default room and send registration confirmation
+	Room *defaultRoom = list_get_where(&(server->list_rooms), ROOM_WELCOME_NAME, room_match_name);
+	if(defaultRoom == NULL){
+		//TODO user should be removed from server
+		fprintf(stderr, "[ERR] Unable to recover the default room for new user\n");
+		messaging_send_error(user->socket, MSG_ERR_CONNECT,  "An error occured, please try again.");
+		return;
+	}
 	fprintf(stdout, "New user (%s) added in server (Sending confirmation)\n", user_name);
 	messaging_send_confirm(user->socket, MSG_CONF_REGISTER, "You have been successfully registered in server");
-	Room *defaultRoom = list_get_where(&(server->list_rooms), ROOM_WELCOME_NAME, room_match_name);
 	room_add_user(defaultRoom, user);
 	fprintf(stdout, "Current user list:\n");
 	list_iterate(&(server->list_users), user_display);
@@ -79,6 +86,42 @@ static void messaging_server_exec_open_room(ServerData *server, User *user, char
 	fprintf(stdout, "Current rooms:\n");
 	list_iterate(&(server->list_rooms), room_display);
 	messaging_send_confirm(user->socket, MSG_CONF_GENERAL, "Room successfully created");
+}
+
+static void messaging_server_exec_enter_room(ServerData* server, User* user, char* name){
+	//Params must be not null
+	name = (name == NULL) ? NULL : str_trim(name);
+	if(user == NULL || name == NULL || room_is_valid_name(name) != 1){
+		fprintf(stderr, "[ERR] Invalid enter message\n");
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name.");
+		return;
+	}
+
+	//To enter a room, user must be first in the default room (The one from connection)
+	if(strcmp(user->room, ROOM_WELCOME_NAME) != 0){
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "You must leave your current room first.");
+		return;
+	}
+
+	//Check whether the requested room exists
+	//TODO Add mutex on the room list
+	Room* new_room = list_get_where(&(server->list_rooms), (void*)name, room_match_name);
+	Room* old_room = list_get_where(&(server->list_rooms), (void*)user->room, room_match_name);
+	if(new_room == NULL || old_room == NULL){
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Room doesn't exists...");
+		return;
+	}
+
+	//Change user room
+	room_remove_user(old_room, user);
+	room_add_user(new_room, user);
+	messaging_send_confirm(user->socket, MSG_CONF_ROOM_ENTER, "You successfully enterred the room.");
+
+	//TODO DEBUG
+	fprintf(stdout, "\nDEBUG %s:%d - New data for list users:\n", __FILE__, __LINE__);
+	list_iterate(&(server->list_users), user_display);
+	fprintf(stdout, "DEBUG %s:%d - New data for list rooms:\n", __FILE__, __LINE__);
+	list_iterate(&(server->list_rooms), room_display);
 }
 
 static void messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){
@@ -152,6 +195,11 @@ int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
 	else if(strcmp(token, "open") == 0){
 		char *name = strtok(NULL, MSG_DELIMITER);
 		messaging_server_exec_open_room(server, user, name);
+	}
+	//Enter rooom
+	else if(strcmp(token, "enter") == 0){
+		char *name = strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_enter_room(server, user, name);
 	}
 	//Room broadcast message
 	else if(strcmp(token, "bdcast") == 0){

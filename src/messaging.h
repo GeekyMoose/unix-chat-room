@@ -30,6 +30,7 @@
 // List of possible confirm value
 #define MSG_CONF_REGISTER "msg_conf_register"
 #define MSG_CONF_GENERAL "msg_conf_general"
+#define MSG_CONF_ROOM_ENTER "msg_conf_room_enter"
 
 // -----------------------------------------------------------------------------
 // Send functions
@@ -47,6 +48,7 @@ int messaging_send_confirm(const int socket, char *type, const char *msg);
 int messaging_send_error(const int socket, char *type, char *msg);
 int messaging_send_whisper(const int socket, const char *sender, const char *receiver, const char *msg);
 int messaging_send_room_open(const int socket, const char *name);
+int messaging_send_room_enter(const int socket, const char *name);
 int messaging_send_room_bdcast(const int socket, const char *msg);
 
 

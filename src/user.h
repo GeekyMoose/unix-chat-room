@@ -31,7 +31,7 @@
 typedef struct _user{
 	int socket;
 	char login[USER_MAX_SIZE+1]; //+1 for '\0'
-	char *room; //Name of the current room where user is
+	char room[ROOM_MAX_SIZE+1]; //Name of the current room where user is
 } User;
 
 

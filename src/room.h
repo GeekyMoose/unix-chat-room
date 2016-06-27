@@ -62,6 +62,8 @@ int room_destroy(Room *room);
 /**
  * \brief		Check whether the given name is valid for a room
  * \details		Null name will return -1
+ * \bug			Will accept name with only spaces (But should be invalid)
+ * 				name should be trim before this function!
  *
  * \param name	The name to test
  * \return		1 if valid, otherwise, return -1
