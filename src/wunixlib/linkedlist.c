@@ -58,6 +58,17 @@ void list_iterate(const Linkedlist *list, iteratorfct f){
 	}
 }
 
+void list_iterate_args(const Linkedlist *list, iterator2fct f, void* args){
+	assert(list != NULL);
+	assert(f != NULL);
+	int retval = 1;
+	LinkedlistNode *current = list->first;
+	while(current != NULL && retval == 1){
+		retval = f(current->data, args);
+		current = current->next;
+	}
+}
+
 int list_append(Linkedlist *list, void * const data){
 	assert(list != NULL);
 	assert(data != NULL);

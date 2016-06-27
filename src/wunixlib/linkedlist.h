@@ -64,6 +64,17 @@ typedef void(*freefct)(void*);
 typedef int(*iteratorfct)(void*);
 
 /**
+ * \brief		Function that iterate a list and receive one extra parameter.
+ * \details		Iterate while function return 1. The working process is 
+ * 				similar to iteratorfct except that it has also one extra 
+ * 				argument defined by user.
+ * \param data	Will be filled by each element iterated.
+ * \param args	Personal arguments
+ * \return		1 to continue, !=1 to stop iteration here
+ */
+typedef int(*iterator2fct)(void* data, void* args);
+
+/**
  * \brief			Compare 2 elements.
  * \details			Function that define the rule for element to match value.
  * 					First parameter will always be filled with current tested element 
@@ -151,6 +162,19 @@ int list_size(const Linkedlist *list);
  * \param f		Iterator function
  */
 void list_iterate(const Linkedlist *list, iteratorfct f);
+
+/**
+ * \brief		Iterate the list according to iterator function with args.
+ * \details		Call f on each Node (While iterator returns 1). 
+ * 				Pass the args parameter to iterator function.
+ * \warning		If list is NULL, assert error thrown.
+ * \warning		If f is NULL, assert error thrown.
+ * \note		args can be null, depending on user implementation of iterator fct.
+ *
+ * \param list	List to iterate
+ * \param f		Iterator function
+ */
+void list_iterate_args(const Linkedlist *list, iterator2fct f, void* args);
 
 /**
  * \brief		Add data element at the end of the list.
