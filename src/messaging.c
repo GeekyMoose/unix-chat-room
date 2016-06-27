@@ -111,4 +111,22 @@ int messaging_send_room_open(const int socket, const char *name){
 	return 1;
 }
 
+int messaging_send_room_bdcast(const int socket, const char *msg){
+	char *cmd		= "bdcast"MSG_DELIMITER; //Add delimiter at end
+	char *buffer	= NULL;
+	buffer = (char*)malloc(sizeof(char) * (strlen(cmd)+strlen(msg)));
+	//Check if malloc failed.
+	if(buffer == NULL){
+		fprintf(stderr, "[ERR] Internal error occured. Unable to malloc (%s:%d)\n", __FILE__, __LINE__);
+		return -1;
+	}
+	//Create the message (Possible update: check if fct failed)
+	strcpy(buffer, cmd);
+	strcat(buffer, msg);
+	bulk_write(socket, buffer, strlen(buffer));
+	free(buffer);
+	return 1;
+}
+
+
 

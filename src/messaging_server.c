@@ -81,7 +81,7 @@ static void messaging_server_exec_open_room(ServerData *server, User *user, char
 	messaging_send_confirm(user->socket, MSG_CONF_GENERAL, "Room successfully created");
 }
 
-static void  messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){
+static void messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){
 	//Check valid message parameters (not null)
 	if(user == NULL || receiver == NULL || msg == NULL){
 		fprintf(stderr, "[ERR] Invalid whisper message (NULL data)\n");
@@ -106,6 +106,9 @@ static void  messaging_server_exec_whisper(ServerData *server, User *user, char 
 	messaging_send_whisper(u->socket, user->login, receiver, msg);
 }
 
+static void messaging_server_exec_room_bdcast(ServerData *server, User *user, const char* msg){
+	fprintf(stdout, "DEBUG: %s : '%s'\n", __FILE__, msg);
+}
 
 // -----------------------------------------------------------------------------
 // Receive process Functions
@@ -136,6 +139,11 @@ int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
 	else if(strcmp(token, "open") == 0){
 		char *name = strtok(NULL, MSG_DELIMITER);
 		messaging_server_exec_open_room(server, user, name);
+	}
+	//Room broadcast message
+	else if(strcmp(token, "bdcast") == 0){
+		char *msg		= strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_room_bdcast(server, user, msg);
 	}
 	return -1; //Means no message match
 }

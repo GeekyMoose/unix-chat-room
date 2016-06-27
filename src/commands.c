@@ -101,6 +101,29 @@ static void process_whisper(ClientData *client, char *msg){
 	messaging_send_whisper(client->socket, client->login, receiver, value);
 }
 
+static void process_broadcast_room(ClientData *client, char *msg){
+	//User must be connected
+	if(client->status != CONNECTED){
+		fprintf(stderr, "You must be connected to a server...\n");
+		return;
+	}
+
+	//Skipp if empty message
+	msg = (msg == NULL) ? NULL : str_trim(msg);
+	if(msg == NULL || *msg == '\n' || *msg == '\0'){
+		return;
+	}
+
+	//Check whether size is correct
+	if(strlen(msg) > CMD_MAX_SIZE){
+		fprintf(stderr, "Invalid format: message is too long...\n");
+		return;
+	}
+
+	//Send message
+	messaging_send_room_bdcast(client->socket, msg);
+}
+
 
 //------------------------------------------------------------------------------
 // Static functions
@@ -188,6 +211,7 @@ void process_console_line(ClientData *client, char *str){
 		return;
 	}
 	//Simple message to send to the server
+	process_broadcast_room(client, str);
 }
 
 void commands_help(void){

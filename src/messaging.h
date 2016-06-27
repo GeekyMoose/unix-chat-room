@@ -47,6 +47,7 @@ int messaging_send_confirm(const int socket, char *type, const char *msg);
 int messaging_send_error(const int socket, char *type, char *msg);
 int messaging_send_whisper(const int socket, const char *sender, const char *receiver, const char *msg);
 int messaging_send_room_open(const int socket, const char *name);
+int messaging_send_room_bdcast(const int socket, const char *msg);
 
 
 

@@ -68,6 +68,11 @@ int messaging_exec_client_receive(ClientData *client, const int socket, char *ms
 		char *msg	= strtok(NULL, MSG_DELIMITER);
 		messaging_client_receiv_error(client, type, msg);
 	}
+	//Msg from room (Broadcast)
+	else if(strcmp(token, "bdcast") == 0){
+		char *msg	= strtok(NULL, MSG_DELIMITER);
+		fprintf(stdout, "\nRoom: %s\n", msg);
+	}
 	return -1; //Means no message match
 }
 

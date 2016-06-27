@@ -70,6 +70,11 @@ int room_remove_user(Room *room, User *user){
 	user->room = NULL; //Remove room from user data
 }
 
+void room_broadcast_message(Room *room, User *user, const char* msg){
+	assert(room != NULL);
+	list_iterate_args(&(room->list_users), user_send_room_bdcast, (void*)msg);
+}
+
 
 // -----------------------------------------------------------------------------
 // List function implementations

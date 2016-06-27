@@ -16,6 +16,7 @@
 #include <string.h>
 #include "wunixlib/linkedlist.h"
 #include "constants.h"
+#include "messaging.h"
 
 
 // -----------------------------------------------------------------------------
@@ -89,6 +90,16 @@ int user_match_name(void* user, void* name);
  * \return		1
  */
 int user_display(void* user);
+
+/**
+ * \brief		Send a message from room to user.
+ * \details		Used by iterator for user list.
+ *
+ * \param user	User where to send
+ * \param msg	Message to send
+ * \return		1
+ */
+int user_send_room_bdcast(void* user, void* msg);
 
 #endif
 

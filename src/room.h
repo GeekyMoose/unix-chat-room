@@ -69,11 +69,13 @@ int room_destroy(Room *room);
 int room_is_valid_name(const char *name);
 
 /**
- * \todo		Not implemented yet
- *
  * \brief	Send a message to all user in the char room.
+ *
+ * \param room	Room where to broadcast
+ * \param user	Sender of the message
+ * \param msg	Message to send
  */
-void room_broadcast_message(Room *room);
+void room_broadcast_message(Room *room, User *user, const char* msg);
 
 
 // -----------------------------------------------------------------------------
@@ -129,9 +131,11 @@ int room_match_name(void* room, void* name);
 int room_display(void* room);
 
 /**
- * \todo Used when destroy list of rooms
+ * \todo	To implements
+ * \brief	Used when destroy list of rooms
  */
 int room_free_elt(void* room);
+
 
 #endif
 
