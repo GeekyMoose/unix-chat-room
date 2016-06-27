@@ -70,6 +70,19 @@ void test_struct_list(){
 	fprintf(stdout, "User4 find: ");
 	display_player((void*)ptr_u);
 
+
+	//Test remove
+	fprintf(stdout, "\nRemove User1 from list: \n");
+	list_remove_where(&list, "User1", match_name);
+	list_iterate(&list, display_player);
+	list_remove_where(&list, "Unknown", match_name); //Should do nothing
+
+	fprintf(stdout, "\nRemove User2 from list: \n");
+	list_remove_where(&list, "User2", match_name);
+	list_iterate(&list, display_player);
+	list_remove_where(&list, "Unknown2", match_name);
+	list_remove_where(&list, "Unknown3", match_name);
+
 	//Finish
 	list_clear(&list);
 }

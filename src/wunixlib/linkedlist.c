@@ -144,3 +144,60 @@ void* list_get_where(const Linkedlist *list, void* value, compfct f){
 	}
 	return NULL;
 }
+
+void* list_remove_where(Linkedlist *list, void* value, compfct f){
+	assert(list != NULL);
+	assert(value != NULL);
+	assert(f != NULL);
+	//Browse each element
+	LinkedlistNode *previous	= NULL;
+	LinkedlistNode *current		= list->first;
+	while(current != NULL){
+		//We found the one to delete
+		if(f(current->data, value) == 1){
+			//If it was the first element, previous is null
+			if(previous == NULL){
+				list->first = current->next;
+			}
+			else{
+				previous->next = current->next;
+			}
+			list->size--;
+			return current;
+		}
+		previous	= current;
+		current		= current->next;
+	}
+	return NULL;
+}
+
+int list_free_where(Linkedlist *list, void* value, compfct f){
+	assert(list != NULL);
+	assert(value != NULL);
+	assert(f != NULL);
+	//Browse each element
+	LinkedlistNode *previous	= NULL;
+	LinkedlistNode *current		= list->first;
+	while(current != NULL){
+		//If is not this one, go next
+		if(f(current->data, value) != 1){
+			previous	= current;
+			current		= current->next;
+			continue;
+		}
+		//We found the one to delete
+		//If it was the first element, previous is null
+		if(previous == NULL){
+			list->first = current->next;
+		}
+		else{
+			previous->next = current->next;
+		}
+		list->size--;
+		if(list->freefct != NULL){
+			list->freefct(current);
+		}
+		return 1;
+	}
+	return -1;
+}

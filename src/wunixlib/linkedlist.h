@@ -16,6 +16,10 @@
  * 				If data was dynamically created (From malloc...), data must be free while
  * 				destroying the list.
  *
+ * \warning		If used with function local variable (Not malloc one), beware 
+ * 				with the variable scope. If function terminate (But list still
+ * 				used), the pointer in list will be broken.
+ *
  * \bug			In case of non dynamic variable passed to the list (Like a simple
  * 				integer), the list will keep a pointer to this int.
  * 				Do not use the same int variable to set several element!
@@ -218,6 +222,37 @@ int list_contains_where(const Linkedlist *list, void* value, compfct f);
  * \return		The element if found, otherwise, return NULL
  */
 void* list_get_where(const Linkedlist *list, void* value, compfct f);
+
+/**
+ * \brief		Remove element from list.
+ * \details		Simple remove, no 'free' call done here. The removed element
+ * 				is returned by the function.
+ * \warning		If list is NULL, assert error thrown.
+ * \warning		If value is NULL, assert error thrown.
+ * \warning		If function is NULL, assert error thrown.
+ *
+ * \param list	List where to remove
+ * \param value	Value to match for removing
+ * \param f		Function used to determine the element to remove. (See compfct doc)
+ * \return		The removed element
+ */
+void* list_remove_where(Linkedlist *list, void* value, compfct f);
+
+/**
+ * \brief		Remove element from list and free its memory.
+ * \details		Do 2 steps: remove element from list and then, call the free
+ * 				function on it. (If NULL free function was set, no free call done.)
+ * 				The element shouldn't be used anymore (Has been free).
+ * \warning		If list is NULL, assert error thrown.
+ * \warning		If value is NULL, assert error thrown.
+ * \warning		If function is NULL, assert error thrown.
+ *
+ * \param list	List where to remove
+ * \param value	Value to match for removing
+ * \param f		Function used to determine element to remove. (See compfct doc)
+ * \return		1 if successfully removed and free, otherwise, return -1
+ */
+int list_free_where(Linkedlist *list, void* value, compfct f);
 
 
 #endif
