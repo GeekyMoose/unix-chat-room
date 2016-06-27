@@ -98,7 +98,7 @@ static void messaging_server_exec_whisper(ServerData *server, User *user, char *
 	//Recover the receiver from list of user (Send error if wrong)
 	User *u = list_get_where(&(server->list_users), receiver, user_match_name);
 	if(u == NULL){
-		messaging_send_error(user->socket, MSG_ERR_UNKOWN_USER, "User doesn't exists");
+		messaging_send_error(user->socket, MSG_ERR_UNKOWN_USER, "User doesn't exists.");
 		return;
 	}
 
@@ -107,7 +107,20 @@ static void messaging_server_exec_whisper(ServerData *server, User *user, char *
 }
 
 static void messaging_server_exec_room_bdcast(ServerData *server, User *user, const char* msg){
-	fprintf(stdout, "DEBUG: %s : '%s'\n", __FILE__, msg);
+	//Skipp invalid data
+	if(user == NULL || msg == NULL){
+		return;
+	}
+
+	//Recover room where user is
+	Room* room = list_get_where(&(server->list_rooms), user->room, room_match_name);
+	if(room == NULL){
+		fprintf(stderr, "Unable to recover the room of user '%s'\n", user->login);
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Unable to send message in room.");
+		return;
+	}
+	fprintf(stdout, "log room (%s): '%s' send '%s'\n", user->room, user->login, msg);
+	room_broadcast_message(room, user, msg);
 }
 
 // -----------------------------------------------------------------------------
