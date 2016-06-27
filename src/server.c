@@ -12,6 +12,7 @@
 #include "server.h"
 
 
+//Used for thread arguments
 struct thread_info{
 	int			socket;
 	ServerData	*server;
@@ -29,9 +30,7 @@ void *client_handler(void *args){
 
 	//Create the new client user
 	ServerData *server = tinfo->server;
-	User *user;
-	user = malloc(sizeof(User));
-	memset(user, 0x00, sizeof(User));
+	User *user = user_create("new_user");
 	if(user == NULL){
 		fprintf(stderr, "Unable to create the user for socket %d\n", tinfo->socket);
 		pthread_exit(NULL);
@@ -45,6 +44,9 @@ void *client_handler(void *args){
 		recv(user->socket, buff, MSG_MAX_SIZE, 0);
 		messaging_server_exec_receive(server, user, buff);
 	}
+
+	//Free data
+	user_destroy(user);
 }
 
 void server_start_listening_clients(ServerData *server, const int socket){
@@ -121,6 +123,8 @@ int main(int argc, char **argv){
 	//Initialize server data
 	ServerData server;
 	server_data_init(&server);
+	User *admin = user_create("admin"); //Admin user just for the default room
+	server_data_add_room(&server, admin, ROOM_WELCOME_NAME);
 
 	//Start listening for new clients
 	server_start_listening_clients(&server, sock);

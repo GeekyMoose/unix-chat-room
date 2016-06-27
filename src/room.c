@@ -18,6 +18,7 @@
 
 Room* room_create(User *owner, const char *name){
 	assert(owner != NULL);
+	assert(name != NULL);
 	Room *room;
 	room = (Room*)malloc(sizeof(Room));
 	if(room == NULL){
@@ -40,6 +41,33 @@ int room_is_valid_name(const char *name){
 	if(name == NULL){ return -1; }
 	size_t size = strlen(name);
 	return (size < ROOM_MIN_SIZE || size > ROOM_MAX_SIZE) ? -1 : 1;
+}
+
+
+// -----------------------------------------------------------------------------
+// Room / User management
+// -----------------------------------------------------------------------------
+
+int room_add_user(Room *room, User *user){
+	assert(room != NULL);
+	assert(user != NULL);
+	//If user already in room
+	if(list_contains_where(&(room->list_users), user->login, room_match_name) == 1){
+		return -1;
+	}
+	list_append(&(room->list_users), user);
+	user->room = room->name; //Also keep this data in user
+}
+
+int room_remove_user(Room *room, User *user){
+	assert(room != NULL);
+	assert(user != NULL);
+	//If user is not in the room
+	if(list_contains_where(&(room->list_users), user->login, user_match_name) != 1){
+		return -1;
+	}
+	list_remove_where(&(room->list_users), user->login, user_match_name);
+	user->room = NULL; //Remove room from user data
 }
 
 

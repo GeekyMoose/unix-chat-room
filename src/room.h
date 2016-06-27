@@ -16,6 +16,8 @@
 #include "constants.h"
 #include "user.h"
 
+#include "wunixlib/linkedlist.h"
+
 
 // -----------------------------------------------------------------------------
 // Structures
@@ -50,6 +52,7 @@ Room* room_create(User *owner, const char *name);
  * \brief		Destroy a room (Free all its memory).
  * \details		The given room won't exists anymore
  * \warning		Thrown assert error if null parameter
+ * \note		The list of user remains!! (No free call on it!)
  *
  * \param room	Room to destroy
  * \return		1 if successfully destroyed, otherwise, return -1
@@ -72,11 +75,14 @@ int room_is_valid_name(const char *name);
  */
 void room_broadcast_message(Room *room);
 
+
+// -----------------------------------------------------------------------------
+// Room / User management
+// -----------------------------------------------------------------------------
+
 /**
- * \todo		Not implemented yet
- *
  * \brief		Add a user in the room.
- * \details		Can fail (Return -1) if user already in this room.
+ * \details		If user already in room, fail and return -1.
  * \warning		Throw assert error if null param.
  *
  * \param room	Room where to place user
@@ -86,10 +92,8 @@ void room_broadcast_message(Room *room);
 int room_add_user(Room *room, User *user);
 
 /**
- * \todo	Not implemented yet
- *
  * \brief		Remove user from room.
- * \details		Can fail (Return -1) if user is not in the room.
+ * \details		If user is not in room, fail and return -1.
  * \warning		Throw assert error if null param.
  *
  * \param room	Room where to remove user
@@ -123,6 +127,11 @@ int room_match_name(void* room, void* name);
  * \return		1
  */
 int room_display(void* room);
+
+/**
+ * \todo Used when destroy list of rooms
+ */
+int room_free_elt(void* room);
 
 #endif
 

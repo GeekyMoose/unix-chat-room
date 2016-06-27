@@ -23,6 +23,8 @@
 #define CMD_MAX_SIZE 500 //Size of command enterred by user
 #define MSG_MAX_SIZE 600 //Size of message throught network
 
+#define ROOM_WELCOME_NAME "enterroom"
+
 #endif
 
 

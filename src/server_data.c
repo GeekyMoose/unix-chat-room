@@ -33,11 +33,12 @@ int server_data_add_user(ServerData *server, User *user){
 	return 1;
 }
 
-int server_data_name_is_used(const Linkedlist *list, const char *name){
+int server_data_name_is_used(const Linkedlist *list, char *name){
 	return list_contains_where(list, (void*)name, user_match_name);
 }
 
-int server_data_add_room(ServerData *server, User *user, const char *name){
+int server_data_add_room(ServerData *server, User *user, char *name){
+	fprintf(stdout, "DEBUG %s:%d: user(%s) , name(%s)\n", __FILE__, __LINE__, user->login, name);
 	//Check valid name
 	if(room_is_valid_name(name) == -1){
 		return -1;
@@ -54,6 +55,6 @@ int server_data_add_room(ServerData *server, User *user, const char *name){
 	return 1;
 }
 
-int server_data_room_is_used(const Linkedlist *list, const char *name){
+int server_data_room_is_used(const Linkedlist *list, char *name){
 	return list_contains_where(list, (void*)name, room_match_name);
 }

@@ -35,10 +35,14 @@ static void messaging_server_exec_connect(ServerData *server, User *user, const 
 		messaging_send_error(user->socket, MSG_ERR_CONNECT,  "Name is already used.");
 		return;
 	}
+
+	//Place user in default room and send registration confirmation
 	fprintf(stdout, "New user (%s) added in server (Sending confirmation)\n", user_name);
+	messaging_send_confirm(user->socket, MSG_CONF_REGISTER, "You have been successfully registered in server");
+	Room *defaultRoom = list_get_where(&(server->list_rooms), ROOM_WELCOME_NAME, room_match_name);
+	room_add_user(defaultRoom, user);
 	fprintf(stdout, "Current user list:\n");
 	list_iterate(&(server->list_users), user_display);
-	messaging_send_confirm(user->socket, MSG_CONF_REGISTER, "You have been successfully registered in server");
 	return;
 }
 
@@ -46,6 +50,7 @@ static void messaging_server_exec_open_room(ServerData *server, User *user, char
 	//Params must be not null
 	if(user == NULL || name == NULL){
 		fprintf(stderr, "[ERR] Invalid open message (NULL data)\n");
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name.");
 		return;
 	}
 

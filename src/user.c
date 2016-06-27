@@ -11,6 +11,18 @@
 
 #include "user.h"
 
+User* user_create(const char *name){
+	assert(name != NULL);
+	User *user;
+	user = (User*)malloc(sizeof(User));
+	memset(user, 0x00, sizeof(User));
+	memcpy(user->login, name, sizeof(name));
+	return user;
+}
+
+void user_destroy(User* user){
+	free(user);
+}
 
 int user_is_valid_name(const char *name){
 	if(name == NULL){ return -1; }
@@ -38,6 +50,6 @@ int user_display(void* user){
 		return 1;
 	}
 	User u = *(User*) user;
-	fprintf(stdout, "User login '%s' / socket '%d' \n", u.login, u.socket);
+	fprintf(stdout, "User '%s' (Room: %s) / socket '%d' \n", u.login, u.room, u.socket);
 	return 1;
 }

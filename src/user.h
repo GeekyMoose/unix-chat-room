@@ -30,12 +30,31 @@
 typedef struct _user{
 	int socket;
 	char login[USER_MAX_SIZE+1]; //+1 for '\0'
+	char *room; //Name of the current room where user is
 } User;
 
 
 // -----------------------------------------------------------------------------
 // General Functions
 // -----------------------------------------------------------------------------
+
+/**
+ * \brief		Create a new user.
+ * \details		User must be destroyed after use.
+ * \warning		Assert error thrown if null parameter.
+ *
+ * \param name	User name to set
+ * \return		Pointer to the new user created.
+ */
+User* user_create(const char *name);
+
+/**
+ * \brief		Destroy the given user. (Free memory)
+ * \warning		Assert error thrown if null parameter.
+ *
+ * \param user	User to destroy
+ */
+void user_destroy(User* user);
 
 /**
  * \brief	Check whether the given name is valid.

@@ -66,7 +66,7 @@ int server_data_add_user(ServerData *server, User *user);
  * \param name	User name
  * \return		1 if is already used yet in the list, otherwise, return 0
  */
-int server_data_name_is_used(const Linkedlist *list, const char *name);
+int server_data_name_is_used(const Linkedlist *list, char *name);
 
 /**
  * \brief		Add a room in the server.
@@ -81,7 +81,7 @@ int server_data_name_is_used(const Linkedlist *list, const char *name);
  * 					-1 if invalid name,
  * 					-2 if already in server
  */
-int server_data_add_room(ServerData *server, User *user, const char *name);
+int server_data_add_room(ServerData *server, User *user, char *name);
 
 /**
  * \brief		Check whether the given name is already used by a room in server.
@@ -90,7 +90,7 @@ int server_data_add_room(ServerData *server, User *user, const char *name);
  * \param name	Name to check
  * \return		1 if is already used, otherwise, return 0
  */
-int server_data_room_is_used(const Linkedlist *list, const char *name);
+int server_data_room_is_used(const Linkedlist *list, char *name);
 
 
 
