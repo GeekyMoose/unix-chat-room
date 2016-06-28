@@ -61,6 +61,19 @@ void server_data_init(ServerData *server);
 int server_data_add_user(ServerData *server, User *user);
 
 /**
+ * \brief			Remove the user from server.
+ * \details			Will disconnect user in the same time.
+ * 					Note that, even if error occurent, user is disconnected.
+ * \warning			Not null parameters expected.
+ *
+ * \param server	Server where to add user
+ * \param user		User to remove from server
+ * \return			1 if successfully removed,
+ * 					-1 if error (Unable to recover its room).
+ */
+int server_data_remove_user(ServerData *server, User *user);
+
+/**
  * \brief			Check whether the given name is already used in the server
  *
  * \param list		List where to check.

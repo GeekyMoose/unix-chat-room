@@ -34,6 +34,22 @@ int server_data_add_user(ServerData *server, User *user){
 	return 1;
 }
 
+int server_data_remove_user(ServerData *server, User *user){
+	//TODO Add mutex on the user list
+	//Recover current user room
+	Room* room = list_get_where(&(server->list_rooms), (void*)(user->room), room_match_name);
+	if(room == NULL){
+		user->connected = 0; //Disconnect anyway
+		list_remove_where(&(server->list_users), (void*)(user->login), user_match_name);
+		return -1;
+	}
+	//Remove user from room and disconnect user
+	room_remove_user(room, user);
+	user->connected = 0;
+	list_remove_where(&(server->list_users), (void*)(user->login), user_match_name);
+	return 1;
+}
+
 int server_data_name_is_used(const Linkedlist *list, char *name){
 	return list_contains_where(list, (void*)name, user_match_name);
 }

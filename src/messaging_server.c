@@ -16,7 +16,7 @@
 // Static functions
 // -----------------------------------------------------------------------------
 static void messaging_server_exec_connect(ServerData*, User*, const char*);
-static void messaging_server_exec_disconnect(ServerData*, User*, char*);
+static void messaging_server_exec_disconnect(ServerData*, User*);
 static void messaging_server_exec_whisper(ServerData*, User*, char*, char*);
 static void messaging_server_exec_room_open(ServerData*, User*, char*);
 static void messaging_server_exec_room_close(ServerData*, User*, char*);
@@ -43,7 +43,7 @@ int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
 		return 1;
 	}
 	else if(strcmp(token, MSG_TYPE_DISCONNECT) == 0){
-		messaging_server_exec_disconnect(server, user, strtok(NULL, MSG_DELIMITER));
+		messaging_server_exec_disconnect(server, user);
 		return 1;
 	}
 	else if(strcmp(token, MSG_TYPE_WHISPER) == 0){
@@ -123,8 +123,24 @@ static void messaging_server_exec_connect(ServerData *server, User *user, const 
 	return;
 }
 
-static void messaging_server_exec_disconnect(ServerData* server, User* user, char* name){
-	//TODO To implements
+static void messaging_server_exec_disconnect(ServerData* server, User* user){
+	//Params must be not null
+	if(user == NULL){
+		fprintf(stderr, "[ERR] Invalid disconnect message (NULL data)\n");
+		return;
+	}
+
+	int errstatus = server_data_remove_user(server, user);
+	if(errstatus != 1){
+		fprintf(stdout, "Unable to recover the room user %s was before disconnecting\n", user->login);
+		return;
+	}
+	fprintf(stdout, "Disconnect user '%s' (Remove it from room '%s')\n", user->login, user->room);
+	messaging_send_confirm(user->socket, MSG_CONF_DISCONNECT, "You have been successfully disconnected");
+
+	//DEBUG
+	fprintf(stdout, "\nDEBUG %s:%d - New data for list users:\n", __FILE__, __LINE__);
+	list_iterate(&(server->list_users), user_display);
 }
 
 static void messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){
@@ -265,8 +281,7 @@ static void messaging_server_exec_room_leave(ServerData* server, User* user){
 
 	//If was already in welcome room, then disconnect user instead.
 	if(strcmp(user->room, ROOM_WELCOME_NAME) == 0){
-		//TODO Disconnect user
-		messaging_send_error(user->socket, MSG_ERR_GENERAL, "You are already in "ROOM_WELCOME_NAME);
+		messaging_server_exec_disconnect(server, user);
 		return;
 	}
 

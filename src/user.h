@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 #include "wunixlib/linkedlist.h"
 #include "constants.h"
 #include "messaging.h"
@@ -30,6 +31,7 @@
  */
 typedef struct _user{
 	int socket;
+	volatile sig_atomic_t connected;
 	char login[USER_MAX_SIZE+1]; //+1 for '\0'
 	char room[ROOM_MAX_SIZE+1]; //Name of the current room where user is
 } User;

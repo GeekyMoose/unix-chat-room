@@ -38,7 +38,7 @@ void *client_handler(void *args){
 	user->socket = tinfo->socket;
 
 	//Listen for message
-	while(server->is_working == 1){
+	while(server->is_working == 1 && user->connected == 1){
 		//TODO CRIT: Add exit process
 		memset(buff, 0x00, sizeof(buff));
 		recv(user->socket, buff, MSG_MAX_SIZE, 0);
@@ -46,6 +46,7 @@ void *client_handler(void *args){
 	}
 
 	//Free data
+	fprintf(stdout, "Client deconnected\n");
 	user_destroy(user);
 }
 

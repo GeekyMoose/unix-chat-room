@@ -17,6 +17,7 @@ User* user_create(const char *name){
 	user = (User*)malloc(sizeof(User));
 	memset(user, 0x00, sizeof(User));
 	memcpy(user->login, name, sizeof(name));
+	user->connected = 1;
 	return user;
 }
 
