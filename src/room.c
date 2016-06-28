@@ -75,9 +75,13 @@ int room_remove_user(Room *room, User *user){
 	strcpy(user->room, ""); //Remove room from user data
 }
 
-void room_broadcast_message(Room *room, User *user, const char* msg){
+void room_broadcast_message(Room *room, User *user, char* msg){
 	assert(room != NULL);
-	list_iterate_args(&(room->list_users), user_send_room_bdcast, (void*)msg);
+	bdcast_params params;
+	params.user_name	= user->login;
+	params.room_name	= room->name;
+	params.msg			= msg;
+	list_iterate_args(&(room->list_users), user_send_room_bdcast, (void*)&params);
 }
 
 

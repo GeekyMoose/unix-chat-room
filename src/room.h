@@ -77,7 +77,7 @@ int room_is_valid_name(const char *name);
  * \param user	Sender of the message
  * \param msg	Message to send
  */
-void room_broadcast_message(Room *room, User *user, const char* msg);
+void room_broadcast_message(Room *room, User *user, char* msg);
 
 /**
  * \brief		Check whether the room is empty (No user inside).

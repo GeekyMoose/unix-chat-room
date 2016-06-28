@@ -43,6 +43,7 @@ typedef struct _client{
 	volatile sig_atomic_t	is_working;
 	ClientStatus			status;
 	char					login[USER_MAX_SIZE];
+	char					room[ROOM_MAX_SIZE];
 	int						socket;
 } ClientData;
 

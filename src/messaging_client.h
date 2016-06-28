@@ -18,6 +18,7 @@
 #include "wunixlib/stream.h"
 #include "messaging.h"
 #include "client_data.h"
+#include "commands.h"
 
 
 // -----------------------------------------------------------------------------

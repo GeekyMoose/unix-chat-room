@@ -76,7 +76,6 @@ int server_data_remove_room(ServerData *server, User *user, char *name){
 	//TODO Add mutex on the room list
 	//Check if room exists
 	Room* room = list_get_where(&(server->list_rooms), (void*)name, room_match_name);
-	fprintf(stdout, "DEBUG %s:%d - '%s'\n", __FILE__, __LINE__, (room == NULL) ? "null" : room->name);
 	if(room == NULL){
 		return -1;
 	}

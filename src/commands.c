@@ -38,7 +38,7 @@ static void commands_process(ClientData *client, char *cmd);
 //------------------------------------------------------------------------------
 
 void commands_prompt_start(ClientData *client, volatile sig_atomic_t *condition){
-	commands_welcome_menu();
+	commands_welcome_menu(NULL);
 	commands_general_description();
 	//Listen cmd while contition is true
 	while(*condition == 1){
@@ -89,7 +89,7 @@ void commands_help(void){
 	);
 }
 
-void commands_welcome_menu(void){
+void commands_welcome_menu(const char *msg){
 	system("clear");
 	fprintf(stdout,
 			"\n"
@@ -102,12 +102,17 @@ void commands_welcome_menu(void){
 			"Console. (You can write !help to see the list of commands)\n"
 			"\n"
 	);
+
+	//Display optional message if requested
+	if(msg != NULL){
+		fprintf(stdout, "%s\n", msg);
+	}
 }
 
 void commands_general_description(void){
 	//TODO Read from file instead
 	fprintf(stdout, 
-			"Chatroom is a client-server program to chat with other clients.\n"
+			"Chatroom is a client-server program to chat with other users.\n"
 			"\nFeatures:\n"
 			"\tWhipser: send message to specific user.\n"
 			"\tRooms: create / delete / enter / leave room.\n"
@@ -285,7 +290,7 @@ static void commands_exec_broadcast(ClientData *client, char *msg){
 	}
 
 	//Send message
-	messaging_send_room_bdcast(client->socket, msg);
+	messaging_send_room_bdcast(client->socket, client->login, client->room, msg);
 }
 
 

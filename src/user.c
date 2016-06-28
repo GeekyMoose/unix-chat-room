@@ -55,9 +55,9 @@ int user_display(void* user){
 	return 1;
 }
 
-int user_send_room_bdcast(void* user, void* msg){
+int user_send_room_bdcast(void* user, void* params){
 	User u = *(User*) user;
-	msg = (char*)msg;
-	messaging_send_room_bdcast(u.socket, msg);
+	bdcast_params p = *(bdcast_params*)params;
+	messaging_send_room_bdcast(u.socket, p.user_name, p.room_name, p.msg);
 	return 1;
 }

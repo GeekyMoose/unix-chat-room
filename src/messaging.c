@@ -64,8 +64,10 @@ int messaging_send_room_enter(const int socket, const char *name){
 int messaging_send_room_leave(const int socket){
 	return messaging_sender(socket, MSG_TYPE_ROOM_LEAVE, 0, 0);
 }
-int messaging_send_room_bdcast(const int socket, const char *msg){
-	return messaging_sender(socket, MSG_TYPE_ROOM_BDCAST, 1, strlen(msg), msg);
+int messaging_send_room_bdcast(const int socket, const char* sender, const char* room, const char *msg){
+	//Warning: the sending order differ from parameter order.. Due to bad design.
+	int size = strlen(sender) + strlen(room) + strlen(msg);
+	return messaging_sender(socket, MSG_TYPE_ROOM_BDCAST, 3, size, msg, room, sender);
 }
 
 

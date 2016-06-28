@@ -19,22 +19,23 @@ static int messaging_client_receiv_confirm(ClientData *client, char* type, const
 	//Process type for specific action
 	if(strcmp(type, MSG_CONF_REGISTER) == 0){
 		client->status = CONNECTED;
+		commands_welcome_menu(msg);
+		return 1;
 	}
 	else if(strcmp(type, MSG_CONF_ROOM_ENTER) == 0){
 		//TODO could change the current room name in local
 	}
 	else if(strcmp(type, MSG_CONF_DISCONNECT) == 0){
 		client->status = DISCONNECTED;
+		commands_welcome_menu(msg);
+		return 1;
 	}
 
 	//Display message if one
 	if(msg != NULL && strlen(msg)>0){
 		fprintf(stdout, "\n%s\n", msg);
 	}
-}
-
-static int messaging_client_receiv_whisper(ClientData *client, char *sender, char *msg){
-	fprintf(stdout, "\nwhisper [%s]: '%s'\n", sender, msg);
+	return 1;
 }
 
 static int messaging_client_receiv_error(ClientData *client, char *type, char *msg){
@@ -78,12 +79,14 @@ int messaging_exec_client_receive(ClientData *client, const int socket, char *ms
 		char *sender	= strtok(NULL, MSG_DELIMITER);
 		char *receiver	= strtok(NULL, MSG_DELIMITER);
 		char *msg		= strtok(NULL, MSG_DELIMITER);
-		messaging_client_receiv_whisper(client, sender, msg);
+		fprintf(stdout, "\nwhisper [%s]: '%s'\n", sender, msg);
 	}
 	//Room messages
 	else if(strcmp(token, MSG_TYPE_ROOM_BDCAST) == 0){
-		char *msg	= strtok(NULL, MSG_DELIMITER);
-		fprintf(stdout, "\nRoom: %s\n", msg);
+		char *msg		= strtok(NULL, MSG_DELIMITER);
+		char *room		= strtok(NULL, MSG_DELIMITER);
+		char *sender	= strtok(NULL, MSG_DELIMITER);
+		fprintf(stdout, "\nroom %s [%s]: %s\n", room, sender, msg);
 	}
 	return -1; //Means no message match
 }

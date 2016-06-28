@@ -49,6 +49,11 @@
 #define MSG_TYPE_CONFIRM "confirm"
 #define MSG_TYPE_ERROR "error"
 
+typedef struct _room_bdcast_params{
+	char* user_name;
+	char* room_name;
+	char* msg;
+} bdcast_params;
 
 // -----------------------------------------------------------------------------
 // Send functions
@@ -71,7 +76,7 @@ int messaging_send_room_open(const int socket, const char *name);
 int messaging_send_room_close(const int socket, const char *name);
 int messaging_send_room_enter(const int socket, const char *name);
 int messaging_send_room_leave(const int socket);
-int messaging_send_room_bdcast(const int socket, const char *msg);
+int messaging_send_room_bdcast(const int socket, const char* sender, const char* room, const char *msg);
 
 //Asset messages
 int messaging_send_confirm(const int socket, char *type, const char *msg);

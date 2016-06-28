@@ -94,14 +94,14 @@ int user_match_name(void* user, void* name);
 int user_display(void* user);
 
 /**
- * \brief		Send a message from room to user.
- * \details		Used by iterator for user list.
+ * \brief			Send a message from room to user.
+ * \details			Used by iterator for user list.
  *
- * \param user	User where to send
- * \param msg	Message to send
- * \return		1
+ * \param user		User where to send
+ * \param params	Broadcast params with all data
+ * \return			1
  */
-int user_send_room_bdcast(void* user, void* msg);
+int user_send_room_bdcast(void* user, void* params);
 
 #endif
 

@@ -56,8 +56,10 @@ void commands_help(void);
 /**
  * \brief		Display the welcome menu for commands prompt.
  * \details		Usually called before starting the command prompt.
+ *
+ * \param msg	Optional message to display at the end
  */
-void commands_welcome_menu(void);
+void commands_welcome_menu(const char *msg);
 
 /**
  * \brief		Display chatroom description
