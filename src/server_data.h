@@ -78,9 +78,9 @@ int server_data_name_is_used(const Linkedlist *list, char *name);
  * \param user		User owner of this room
  * \param name		Name to give for this room
  * \return			1 if successfully added,
- * 					0 if error occured,
  * 					-1 if invalid name,
  * 					-2 if already in server
+ * 					-3 if internal error (Unable to malloc)
  */
 int server_data_add_room(ServerData *server, User *user, char *name);
 

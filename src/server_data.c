@@ -50,7 +50,7 @@ int server_data_add_room(ServerData *server, User *user, char *name){
 	//Create room
 	Room *room = room_create(user, name);
 	if(room == NULL){
-		return 0;
+		return -3;
 	}
 	list_append(&(server->list_rooms), room);
 	return 1;

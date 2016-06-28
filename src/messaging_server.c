@@ -168,28 +168,26 @@ static void messaging_server_exec_room_open(ServerData *server, User *user, char
 	//Try to add room and check error
 	name = str_trim(name);
 	int errstatus = server_data_add_room(server, user, name);
-	//Invalid name
-	if(errstatus == -1){
-		fprintf(stderr, "Invalid open message: room name '%s'\n", name);
-		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name.");
-		return;
+	switch(errstatus){
+		case 1: //OK
+			fprintf(stdout, "New room created: '%s' (Owner: '%s')\n", name, user->login);
+			fprintf(stdout, "DEBUG %s:%d - Current rooms:\n", __FILE__, __LINE__);
+			list_iterate(&(server->list_rooms), room_display);
+			messaging_send_confirm(user->socket, MSG_CONF_GENERAL, "Room successfully created");
+			return;
+		case -1: //Invalid name
+			fprintf(stderr, "Invalid open message: room name '%s'\n", name);
+			messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name.");
+			return;
+		case -2: //Room already used by server
+			fprintf(stderr, "Invalid open message: room name '%s' already used.\n", name);
+			messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name: already used.");
+			return;
+		case -3: //Internal error (Malloc error)
+			fprintf(stderr, "Unable to create room '%s': internal error (malloc).\n", name);
+			messaging_send_error(user->socket, MSG_ERR_GENERAL, "Sorry, we are unable to create the room.");
+			return;
 	}
-	//Room already used on server
-	else if(errstatus == -2){
-		fprintf(stderr, "Invalid open message: room name '%s' already used.\n", name);
-		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name: already used.");
-		return;
-	}
-	//Malloc error
-	else if(errstatus == 0){
-		fprintf(stderr, "Unable to create room '%s': internal error (malloc).\n", name);
-		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Sorry, we are unable to create the room.");
-		return;
-	}
-	fprintf(stdout, "New room created: '%s' (Owner: '%s')\n", name, user->login);
-	fprintf(stdout, "Current rooms:\n");
-	list_iterate(&(server->list_rooms), room_display);
-	messaging_send_confirm(user->socket, MSG_CONF_GENERAL, "Room successfully created");
 }
 
 static void messaging_server_exec_room_close(ServerData* server, User* user, char* name){
@@ -259,8 +257,32 @@ static void messaging_server_exec_room_enter(ServerData* server, User* user, cha
 }
 
 static void messaging_server_exec_room_leave(ServerData* server, User* user){
-	//TODO To implements
-	return;
+	//Params must be not null
+	if(user == NULL){
+		fprintf(stderr, "[ERR] Invalid leave message\n");
+		return;
+	}
+
+	//If was already in welcome room, then disconnect user instead.
+	if(strcmp(user->room, ROOM_WELCOME_NAME) == 0){
+		//TODO Disconnect user
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "You are already in "ROOM_WELCOME_NAME);
+		return;
+	}
+
+	//Recover current user room and welcome room
+	//TODO Add mutex on the room list
+	Room* old_room = list_get_where(&(server->list_rooms), (void*)user->room, room_match_name);
+	Room* new_room = list_get_where(&(server->list_rooms), (void*)ROOM_WELCOME_NAME, room_match_name);
+	if(old_room == NULL || new_room == NULL){
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Error occurent, unable to leave room.");
+		return;
+	}
+
+	//Change user room
+	room_remove_user(old_room, user);
+	room_add_user(new_room, user);
+	messaging_send_confirm(user->socket, MSG_CONF_ROOM_ENTER, "You successfully leaved the room.");
 }
 
 static void messaging_server_exec_room_bdcast(ServerData *server, User *user, const char* msg){
