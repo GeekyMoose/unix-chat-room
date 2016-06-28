@@ -169,8 +169,12 @@ static void commands_exec_connect(ClientData *client, char *str){
 }
 
 static void commands_exec_bye(ClientData* client, char* args){
-	//TODO To implements
-	fprintf(stdout, "Command not working yet...\n");
+	//User must be connected
+	if(client->status != CONNECTED){
+		fprintf(stderr, "You must be connected to a server...\n");
+		return;
+	}
+	messaging_send_bye(client->socket);
 }
 
 static void commands_exec_rooms(ClientData* client, char* args){
@@ -184,7 +188,6 @@ static void commands_exec_open(ClientData *client, char *args){
 		fprintf(stderr, "You must be connected to a server...\n");
 		return;
 	}
-
 	//Check whether room name is valid (Note: deeply done server side)
 	if(args == NULL || *args == '\n' || *args == '\0'){
 		fprintf(stderr, "Invalid command. Usage: !open <room_name>\n");
@@ -195,11 +198,22 @@ static void commands_exec_open(ClientData *client, char *args){
 }
 
 static void commands_exec_close(ClientData *client, char *args){
-	//TODO To implements
-	fprintf(stdout, "Command not working yet...\n");
+	//User must be connected
+	if(client->status != CONNECTED){
+		fprintf(stderr, "You must be connected to a server...\n");
+		return;
+	}
+	//Check whether room name is valid (Note: deeply done server side)
+	if(args == NULL || *args == '\n' || *args == '\0'){
+		fprintf(stderr, "Invalid command. Usage: !close <room_name>\n");
+		return;
+	}
+	//Send request
+	messaging_send_room_close(client->socket, args);
 }
 
 static void commands_exec_enter(ClientData *client, char *args){
+	//User must be connected
 	if(client->status != CONNECTED){
 		fprintf(stderr, "You must be connected to a server...\n");
 		return;
@@ -216,8 +230,12 @@ static void commands_exec_enter(ClientData *client, char *args){
 }
 
 static void commands_exec_leave(ClientData *client, char *args){
-	//TODO To implements
-	fprintf(stdout, "Command not working yet...\n");
+	//User must be connected
+	if(client->status != CONNECTED){
+		fprintf(stderr, "You must be connected to a server...\n");
+		return;
+	}
+	messaging_send_room_leave(client->socket);
 }
 
 static void commands_exec_whisper(ClientData *client, char *msg){

@@ -179,12 +179,12 @@ int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
 
 	//Process each possible message
 	//User connection
-	if(strcmp(token, "connect") == 0){
+	if(strcmp(token, MSG_TYPE_CONNECT) == 0){
 		messaging_server_exec_connect(server, user, strtok(NULL, MSG_DELIMITER));
 		return 1;
 	}
 	//User whipser
-	else if(strcmp(token, "whisper") == 0){
+	else if(strcmp(token, MSG_TYPE_WHISPER) == 0){
 		char *sender	= strtok(NULL, MSG_DELIMITER);
 		char *receiver	= strtok(NULL, MSG_DELIMITER);
 		char *msg		= strtok(NULL, MSG_DELIMITER);
@@ -192,17 +192,17 @@ int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
 		return 1;
 	}
 	//Create new room
-	else if(strcmp(token, "open") == 0){
+	else if(strcmp(token, MSG_TYPE_ROOM_OPEN) == 0){
 		char *name = strtok(NULL, MSG_DELIMITER);
 		messaging_server_exec_open_room(server, user, name);
 	}
 	//Enter rooom
-	else if(strcmp(token, "enter") == 0){
+	else if(strcmp(token, MSG_TYPE_ROOM_ENTER) == 0){
 		char *name = strtok(NULL, MSG_DELIMITER);
 		messaging_server_exec_enter_room(server, user, name);
 	}
 	//Room broadcast message
-	else if(strcmp(token, "bdcast") == 0){
+	else if(strcmp(token, MSG_TYPE_ROOM_BDCAST) == 0){
 		char *msg		= strtok(NULL, MSG_DELIMITER);
 		messaging_server_exec_room_bdcast(server, user, msg);
 	}

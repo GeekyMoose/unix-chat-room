@@ -37,14 +37,14 @@ static int messaging_sender(const int socket, const char *cmd, const int nb, con
 // -----------------------------------------------------------------------------
 
 int messaging_send_connect(const int socket, const char *name){
-	return messaging_sender(socket, "connect", 1, strlen(name), name);
+	return messaging_sender(socket, MSG_TYPE_CONNECT, 1, strlen(name), name);
 }
 int messaging_send_bye(const int socket){
-	return messaging_sender(socket, "bye", 0, 0);
+	return messaging_sender(socket, MSG_TYPE_DISCONNECT, 0, 0);
 }
 int messaging_send_whisper(const int socket, const char *sender, const char *receiver, const char *msg){
 	int size = strlen(sender) + strlen(receiver) + strlen(msg);
-	return messaging_sender(socket, "whisper", 3, size, sender, receiver, msg);
+	return messaging_sender(socket, MSG_TYPE_WHISPER, 3, size, sender, receiver, msg);
 }
 
 
@@ -53,19 +53,19 @@ int messaging_send_whisper(const int socket, const char *sender, const char *rec
 // -----------------------------------------------------------------------------
 
 int messaging_send_room_open(const int socket, const char *name){
-	return messaging_sender(socket, "open", 1, strlen(name), name);
+	return messaging_sender(socket, MSG_TYPE_ROOM_OPEN, 1, strlen(name), name);
 }
 int messaging_send_room_close(const int socket, const char *name){
-	return messaging_sender(socket, "close", 1, strlen(name), name);
+	return messaging_sender(socket, MSG_TYPE_ROOM_CLOSE, 1, strlen(name), name);
 }
 int messaging_send_room_enter(const int socket, const char *name){
-	return messaging_sender(socket, "enter", 1, strlen(name), name);
+	return messaging_sender(socket, MSG_TYPE_ROOM_ENTER, 1, strlen(name), name);
 }
 int messaging_send_room_leave(const int socket){
-	return messaging_sender(socket, "leave", 0, 0);
+	return messaging_sender(socket, MSG_TYPE_ROOM_LEAVE, 0, 0);
 }
 int messaging_send_room_bdcast(const int socket, const char *msg){
-	return messaging_sender(socket, "bdcast", 1, strlen(msg), msg);
+	return messaging_sender(socket, MSG_TYPE_ROOM_BDCAST, 1, strlen(msg), msg);
 }
 
 
@@ -112,7 +112,6 @@ static int messaging_sender(const int socket, const char *cmd, const int nb, con
 	va_end(args);
 
 	//Send message and free buffer
-	fprintf(stdout, "DEBUG %s:%d - %s\n", __FILE__, __LINE__, buffer);
 	bulk_write(socket, buffer, strlen(buffer));
 	free(buffer);
 	return 1;

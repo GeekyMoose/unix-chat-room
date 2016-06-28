@@ -32,6 +32,22 @@
 #define MSG_CONF_REGISTER "msg_conf_register"
 #define MSG_CONF_GENERAL "msg_conf_general"
 #define MSG_CONF_ROOM_ENTER "msg_conf_room_enter"
+#define MSG_CONF_DISCONNECT "msg_conf_disconnect"
+
+// List of possible message type
+#define MSG_TYPE_CONNECT "connect"
+#define MSG_TYPE_DISCONNECT "bye"
+#define MSG_TYPE_WHISPER "whisper"
+
+#define MSG_TYPE_ROOM_OPEN "open"
+#define MSG_TYPE_ROOM_CLOSE "close"
+#define MSG_TYPE_ROOM_ENTER "enter"
+#define MSG_TYPE_ROOM_LEAVE "leave"
+#define MSG_TYPE_ROOM_BDCAST "bdcast"
+
+#define MSG_TYPE_CONFIRM "confirm"
+#define MSG_TYPE_ERROR "error"
+
 
 // -----------------------------------------------------------------------------
 // Send functions

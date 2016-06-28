@@ -16,13 +16,21 @@
 // Static function for server message execution
 // -----------------------------------------------------------------------------
 static int messaging_client_receiv_confirm(ClientData *client, char* type, const char *msg){
+	//Process type for specific action
 	if(strcmp(type, MSG_CONF_REGISTER) == 0){
 		client->status = CONNECTED;
 	}
 	else if(strcmp(type, MSG_CONF_ROOM_ENTER) == 0){
 		//TODO could change the current room name in local
 	}
-	fprintf(stdout, "\n%s\n", msg);
+	else if(strcmp(type, MSG_CONF_DISCONNECT) == 0){
+		client->status = DISCONNECTED;
+	}
+
+	//Display message if one
+	if(msg != NULL && strlen(msg)>0){
+		fprintf(stdout, "\n%s\n", msg);
+	}
 }
 
 static int messaging_client_receiv_whisper(ClientData *client, char *sender, char *msg){
@@ -55,24 +63,24 @@ int messaging_exec_client_receive(ClientData *client, const int socket, char *ms
 	if(token == NULL){ return -1; }
 
 	//Process each possible message
-	if(strcmp(token,"confirm") == 0){
+	if(strcmp(token, MSG_TYPE_CONFIRM) == 0){
 		char *type	= strtok(NULL, MSG_DELIMITER);
 		char *msg	= strtok(NULL, MSG_DELIMITER);
 		messaging_client_receiv_confirm(client, type, msg);
 	}
-	else if(strcmp(token, "whisper") == 0){
+	else if(strcmp(token, MSG_TYPE_WHISPER) == 0){
 		char *sender	= strtok(NULL, MSG_DELIMITER);
 		char *receiver	= strtok(NULL, MSG_DELIMITER);
 		char *msg		= strtok(NULL, MSG_DELIMITER);
 		messaging_client_receiv_whisper(client, sender, msg);
 	}
-	else if(strcmp(token, "error") == 0){
+	else if(strcmp(token, MSG_TYPE_ERROR) == 0){
 		char *type	= strtok(NULL, MSG_DELIMITER);
 		char *msg	= strtok(NULL, MSG_DELIMITER);
 		messaging_client_receiv_error(client, type, msg);
 	}
 	//Msg from room (Broadcast)
-	else if(strcmp(token, "bdcast") == 0){
+	else if(strcmp(token, MSG_TYPE_ROOM_BDCAST) == 0){
 		char *msg	= strtok(NULL, MSG_DELIMITER);
 		fprintf(stdout, "\nRoom: %s\n", msg);
 	}
