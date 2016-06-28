@@ -12,8 +12,118 @@
 #include "commands.h"
 
 
+// -----------------------------------------------------------------------------
+// Static prototypes
+// -----------------------------------------------------------------------------
+
+//Commands exec functions
+static void commands_exec_connect(ClientData *client, char *str);
+static void commands_exec_bye(ClientData* client, char* args);
+static void commands_exec_rooms(ClientData* client, char* args);
+static void commands_exec_open(ClientData *client, char *args);
+static void commands_exec_close(ClientData *client, char *args);
+static void commands_exec_enter(ClientData *client, char *args);
+static void commands_exec_leave(ClientData *client, char *args);
+static void commands_exec_whisper(ClientData *client, char *msg);
+static void commands_exec_broadcast(ClientData *client, char *msg);
+
+//Assets functions
+static int commands_is_cmd(const char *str);
+static int commands_is_whisper(const char *str);
+static void commands_process(ClientData *client, char *cmd);
+
+
 //------------------------------------------------------------------------------
-// Static functions for each command process
+// Public functions
+//------------------------------------------------------------------------------
+
+void commands_prompt_start(ClientData *client, volatile sig_atomic_t *condition){
+	commands_welcome_menu();
+	commands_general_description();
+	//Listen cmd while contition is true
+	while(*condition == 1){
+		char str[CMD_MAX_SIZE+1];
+		//Change promp display according to user status
+		switch(client->status){
+			case CONNECTED:
+				fprintf(stdout, "%s > ", client->login);
+				break;
+			case CONNECTING:
+				fprintf(stdout, "connecting > ");
+				break;
+			default:
+				fprintf(stdout, "> ");
+				break;
+		}
+		readline_stdin(str, CMD_MAX_SIZE);
+		commands_prompt_process_line(client, str);
+	}
+}
+
+void commands_prompt_process_line(ClientData *client, char *str){
+	//A command to execute in the server
+	if(commands_is_cmd(str) == TRUE){
+		commands_process(client, str);
+		return;
+	}
+	//Whipser to specific user
+	else if(commands_is_whisper(str) == TRUE){
+		commands_exec_whisper(client, str);
+		return;
+	}
+	//Default is the room chat
+	commands_exec_broadcast(client, str);
+}
+
+void commands_help(void){
+	fprintf(stdout, 
+			"\nCommands:\n"
+			"!connect <username>@<server> [:port]\n"
+			"!bye\n"
+			"!rooms\n"
+			"!open <room_name>\n"
+			"!close <room_name>\n"
+			"!enter <room_name>\n"
+			"!leave\n"
+			"*username* message\n"
+	);
+}
+
+void commands_welcome_menu(void){
+	system("clear");
+	fprintf(stdout,
+			"\n"
+			"  ____ _           _\n"
+			" / ___| |__   __ _| |_   _ __ ___   ___  _ __ ___ \n"
+			"| |   | '_ \\ / _` | __| | '__/ _ \\ / _ \\| '_ ` _ \\ \n"
+			"| |___| | | | (_| | |_  | | | (_) | (_) | | | | | | \n"
+			" \\____|_| |_|\\__,_|\\__| |_|  \\___/ \\___/|_| |_| |_| \n"
+			"\n"
+			"Console. (You can write !help to see the list of commands)\n"
+			"\n"
+	);
+}
+
+void commands_general_description(void){
+	//TODO Read from file instead
+	fprintf(stdout, 
+			"Chatroom is a client-server program to chat with other clients.\n"
+			"\nFeatures:\n"
+			"\tWhipser: send message to specific user.\n"
+			"\tRooms: create / delete / enter / leave room.\n"
+			"\tChat: send message to all users in room.\n"
+			"\tLogin: connect / disconnect from server\n"
+			"\t%s: default room where new connected user is placed.\n"
+			"\tTo enter a room, user should first go back to %s\n"
+			"\n"
+			"You must connect to a server with !connect...\n"
+			,ROOM_WELCOME_NAME, ROOM_WELCOME_NAME
+	);
+}
+
+
+//------------------------------------------------------------------------------
+// Static functions for each command process (Exec functions)
 //
 // Each function process a specific command and execute the required action.
 // In all case, str parameter is the command written by user without the command 
@@ -58,6 +168,16 @@ static void commands_exec_connect(ClientData *client, char *str){
 	client_start_listening(client);
 }
 
+static void commands_exec_bye(ClientData* client, char* args){
+	//TODO To implements
+	fprintf(stdout, "Command not working yet...\n");
+}
+
+static void commands_exec_rooms(ClientData* client, char* args){
+	//TODO To implements
+	fprintf(stdout, "Command not working yet...\n");
+}
+
 static void commands_exec_open(ClientData *client, char *args){
 	//User must be connected
 	if(client->status != CONNECTED){
@@ -72,6 +192,11 @@ static void commands_exec_open(ClientData *client, char *args){
 	}
 	//Send request
 	messaging_send_room_open(client->socket, args);
+}
+
+static void commands_exec_close(ClientData *client, char *args){
+	//TODO To implements
+	fprintf(stdout, "Command not working yet...\n");
 }
 
 static void commands_exec_enter(ClientData *client, char *args){
@@ -90,7 +215,12 @@ static void commands_exec_enter(ClientData *client, char *args){
 	messaging_send_room_enter(client->socket, str_trim(args));
 }
 
-static void process_whisper(ClientData *client, char *msg){
+static void commands_exec_leave(ClientData *client, char *args){
+	//TODO To implements
+	fprintf(stdout, "Command not working yet...\n");
+}
+
+static void commands_exec_whisper(ClientData *client, char *msg){
 	//User must be connected to whisper
 	if(client->status != CONNECTED){
 		fprintf(stderr, "You must be connected to a server before using whisper...\n");
@@ -117,7 +247,7 @@ static void process_whisper(ClientData *client, char *msg){
 	messaging_send_whisper(client->socket, client->login, receiver, value);
 }
 
-static void process_broadcast_room(ClientData *client, char *msg){
+static void commands_exec_broadcast(ClientData *client, char *msg){
 	//User must be connected
 	if(client->status != CONNECTED){
 		fprintf(stderr, "You must be connected to a server...\n");
@@ -142,23 +272,23 @@ static void process_broadcast_room(ClientData *client, char *msg){
 
 
 //------------------------------------------------------------------------------
-// Static functions
+// Asset functions
 //------------------------------------------------------------------------------
 
-static int is_command(const char *str){
+static int commands_is_cmd(const char *str){
 	if(str == NULL){ return FALSE; }
 	return str[0] == '!' ? TRUE : FALSE;
 }
 
-static int is_whisper(const char *str){
+static int commands_is_whisper(const char *str){
 	if(str == NULL){ return FALSE; }
 	return str[0] == '*' ? TRUE : FALSE;
 }
 
-static void process_command(ClientData *client, char *cmd){
+static void commands_process(ClientData *client, char *cmd){
 	//Check whether command size is correct
 	if(strlen(cmd) > CMD_MAX_SIZE){
-		fprintf(stderr, "Command is to long.");
+		fprintf(stderr, "Command is to long.\n");
 		return;
 	}
 
@@ -173,18 +303,22 @@ static void process_command(ClientData *client, char *cmd){
 		commands_exec_connect(client, args);
 	}
 	else if(strcmp(cmd_name, "bye") == 0){
+		commands_exec_bye(client, args);
 	}
 	else if(strcmp(cmd_name, "rooms") == 0){
+		commands_exec_rooms(client, args);
 	}
 	else if(strcmp(cmd_name, "open") == 0){
 		commands_exec_open(client, args);
 	}
 	else if(strcmp(cmd_name, "close") == 0){
+		commands_exec_close(client, args);
 	}
 	else if(strcmp(cmd_name, "enter") == 0){
 		commands_exec_enter(client, args);
 	}
 	else if(strcmp(cmd_name, "leave") == 0){
+		commands_exec_leave(client, args);
 	}
 	else if(strcmp(cmd_name, "help") == 0){
 		commands_help();
@@ -192,51 +326,6 @@ static void process_command(ClientData *client, char *cmd){
 	else{
 		fprintf(stderr, "Unknown command...\n");
 	}
-}
-
-
-//------------------------------------------------------------------------------
-// Public functions
-//------------------------------------------------------------------------------
-
-void prompt_cmd(ClientData *client){
-	char str[CMD_MAX_SIZE];
-	switch(client->status){
-		case CONNECTED:
-			fprintf(stdout, "%s > ", client->login);
-			break;
-		case CONNECTING:
-			fprintf(stdout, "connecting > ");
-			break;
-		default:
-			fprintf(stdout, "> ");
-			break;
-	}
-	readline_stdin(str, CMD_MAX_SIZE);
-	process_console_line(client, str);
-}
-
-void process_console_line(ClientData *client, char *str){
-	//A command to execute in the server
-	if(is_command(str) == TRUE){
-		process_command(client, str);
-		return;
-	}
-	//Whipser to specific user
-	else if(is_whisper(str) == TRUE){
-		process_whisper(client, str);
-		return;
-	}
-	//Simple message to send to the server
-	process_broadcast_room(client, str);
-}
-
-void commands_help(void){
-	fprintf(stdout, "\nCommands:\n");
-	fprintf(stdout, "!connect <username>@<server> [:port]\n");
-	fprintf(stdout, "!open <room_name>\n");
-	fprintf(stdout, "!enter <room_name>\n");
-	fprintf(stdout, "*username* message\n");
 }
 
 

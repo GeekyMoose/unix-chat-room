@@ -28,26 +28,41 @@
 
 /**
  * \brief			Display one command prompt and wait for user cmd.
- * \details			Function block till user enter its command.
+ * \details			Function life: wait (block) for user keyboard str, process str,
+ * 					return beginning.
+ * \warning			ClientData should be not null.
+ * \warning			condition should be not null.
  *
  * \param client	Client owner of the command prompt
+ * \param condition	Run while value pointed by condition is 1
  */
-void prompt_cmd(ClientData *client);
+void commands_prompt_start(ClientData *client, volatile sig_atomic_t *condition);
 
 /**
  * \brief			Process a command line.
  * \details			String can be a simple message, a command, a whisper.
+ * \warning			ClientData should be not null.
  *
  * \param client	Client who wrote the line
  * \param str		String to process
  */
-void process_console_line(ClientData *client, char *str);
-
+void commands_prompt_process_line(ClientData *client, char *str);
 
 /**
  * \brief Display all available commands
  */
 void commands_help(void);
+
+/**
+ * \brief		Display the welcome menu for commands prompt.
+ * \details		Usually called before starting the command prompt.
+ */
+void commands_welcome_menu(void);
+
+/**
+ * \brief		Display chatroom description
+ */
+void commands_general_description(void);
 
 
 #endif

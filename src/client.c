@@ -21,13 +21,6 @@ struct thread_info{
 // -----------------------------------------------------------------------------
 // Static functions (Privates)
 // -----------------------------------------------------------------------------
-static void display_console(ClientData *client){
-	system("clear");
-	fprintf(stdout, "Console. (You can write !help to see the list of commands)\n");
-	while(client->is_working == TRUE){
-		prompt_cmd(client);
-	}
-}
 
 // Listen a socket, simple read it (Meant to be used as thread function)
 void *client_listen_socket(void *args){
@@ -81,7 +74,7 @@ int main(int argc, char **argv){
 	//Create client data and start the console
 	ClientData c;
 	client_data_init(&c);
-	display_console(&c);
+	commands_prompt_start(&c, &(c.is_working));
 
 	fprintf(stdout, "Stop client\n");
 	return EXIT_SUCCESS;
