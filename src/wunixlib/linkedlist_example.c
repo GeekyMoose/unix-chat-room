@@ -46,6 +46,7 @@ void test_struct_list(){
 
 	user u1 = {"User1", 1};
 	user u2 = {"User2", 2};
+	user u3 = {"User3", 3};
 	list_append(&list, &u1);
 	list_append(&list, &u2);
 
@@ -77,11 +78,22 @@ void test_struct_list(){
 	list_iterate(&list, display_player);
 	list_remove_where(&list, "Unknown", match_name); //Should do nothing
 
+	//Re add user1
+	fprintf(stdout, "\nRe add User1 in list: \n");
+	list_append(&list, &u1);
+	list_iterate(&list, display_player);
+	
+	//Remove user2
 	fprintf(stdout, "\nRemove User2 from list: \n");
 	list_remove_where(&list, "User2", match_name);
 	list_iterate(&list, display_player);
 	list_remove_where(&list, "Unknown2", match_name);
 	list_remove_where(&list, "Unknown3", match_name);
+
+	//Add user 3
+	fprintf(stdout, "\nAdd User3 in list: \n");
+	list_append(&list, &u3);
+	list_iterate(&list, display_player);
 
 	//Finish
 	list_clear(&list);
