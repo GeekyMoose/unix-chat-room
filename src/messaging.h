@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h> //For variable list of function arguments
 #include "wunixlib/stream.h"
 
 #define MSG_DELIMITER ";;;"
@@ -43,13 +44,21 @@
 // Warning: atm, any parameter test is done and parameter should be valid (Not null etc)
 // -----------------------------------------------------------------------------
 
+//User messages
 int messaging_send_connect(const int socket, const char *name);
+int messaging_send_bye(const int socket);
+int messaging_send_whisper(const int socket, const char *sender, const char *receiver, const char *msg);
+
+//Room messages
+int messaging_send_room_open(const int socket, const char *name);
+int messaging_send_room_close(const int socket, const char *name);
+int messaging_send_room_enter(const int socket, const char *name);
+int messaging_send_room_leave(const int socket);
+int messaging_send_room_bdcast(const int socket, const char *msg);
+
+//Asset messages
 int messaging_send_confirm(const int socket, char *type, const char *msg);
 int messaging_send_error(const int socket, char *type, char *msg);
-int messaging_send_whisper(const int socket, const char *sender, const char *receiver, const char *msg);
-int messaging_send_room_open(const int socket, const char *name);
-int messaging_send_room_enter(const int socket, const char *name);
-int messaging_send_room_bdcast(const int socket, const char *msg);
 
 
 
