@@ -32,6 +32,7 @@
 #define MSG_CONF_REGISTER "msg_conf_register"
 #define MSG_CONF_GENERAL "msg_conf_general"
 #define MSG_CONF_ROOM_ENTER "msg_conf_room_enter"
+#define MSG_CONF_ROOM_CLOSE "msg_conf_room_close"
 #define MSG_CONF_DISCONNECT "msg_conf_disconnect"
 
 // List of possible message type

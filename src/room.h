@@ -71,13 +71,22 @@ int room_destroy(Room *room);
 int room_is_valid_name(const char *name);
 
 /**
- * \brief	Send a message to all user in the char room.
+ * \brief		Send a message to all user in the char room.
  *
  * \param room	Room where to broadcast
  * \param user	Sender of the message
  * \param msg	Message to send
  */
 void room_broadcast_message(Room *room, User *user, const char* msg);
+
+/**
+ * \brief		Check whether the room is empty (No user inside).
+ * \warning		Parameter must be not null and valid.
+ *
+ * \param room	Room to test
+ * \return		1 if empty, otherwise, return 0
+ */
+int room_is_empty(Room *room);
 
 
 // -----------------------------------------------------------------------------
@@ -136,7 +145,7 @@ int room_display(void* room);
  * \todo	To implements
  * \brief	Used when destroy list of rooms
  */
-int room_free_elt(void* room);
+void room_free_elt(void* room);
 
 
 #endif

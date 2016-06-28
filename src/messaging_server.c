@@ -13,8 +13,78 @@
 
 
 // -----------------------------------------------------------------------------
-// Static function for server message execution
+// Static functions
 // -----------------------------------------------------------------------------
+static void messaging_server_exec_connect(ServerData*, User*, const char*);
+static void messaging_server_exec_disconnect(ServerData*, User*, char*);
+static void messaging_server_exec_whisper(ServerData*, User*, char*, char*);
+static void messaging_server_exec_room_open(ServerData*, User*, char*);
+static void messaging_server_exec_room_close(ServerData*, User*, char*);
+static void messaging_server_exec_room_enter(ServerData*, User*, char*);
+static void messaging_server_exec_room_leave(ServerData*, User*);
+static void messaging_server_exec_room_bdcast(ServerData*, User*, const char*);
+
+
+
+// -----------------------------------------------------------------------------
+// Receive process Functions
+// -----------------------------------------------------------------------------
+
+int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
+	if(msg == NULL){ return -1; }
+
+	//Recover the type of message (First element in msg, must be not NULL)
+	char *token = strtok(msg, MSG_DELIMITER);
+	if(token == NULL){ return -1; }
+
+	//User messages
+	if(strcmp(token, MSG_TYPE_CONNECT) == 0){
+		messaging_server_exec_connect(server, user, strtok(NULL, MSG_DELIMITER));
+		return 1;
+	}
+	else if(strcmp(token, MSG_TYPE_DISCONNECT) == 0){
+		messaging_server_exec_disconnect(server, user, strtok(NULL, MSG_DELIMITER));
+		return 1;
+	}
+	else if(strcmp(token, MSG_TYPE_WHISPER) == 0){
+		char *sender	= strtok(NULL, MSG_DELIMITER);
+		char *receiver	= strtok(NULL, MSG_DELIMITER);
+		char *msg		= strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_whisper(server, user, receiver, msg);
+		return 1;
+	}
+
+	//Room messages
+	else if(strcmp(token, MSG_TYPE_ROOM_OPEN) == 0){
+		char *name = strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_room_open(server, user, name);
+	}
+	else if(strcmp(token, MSG_TYPE_ROOM_CLOSE) == 0){
+		char *name = strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_room_close(server, user, name);
+		return 1;
+	}
+	else if(strcmp(token, MSG_TYPE_ROOM_ENTER) == 0){
+		char *name = strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_room_enter(server, user, name);
+		return 1;
+	}
+	else if(strcmp(token, MSG_TYPE_ROOM_LEAVE) == 0){
+		messaging_server_exec_room_leave(server, user);
+		return 1;
+	}
+	else if(strcmp(token, MSG_TYPE_ROOM_BDCAST) == 0){
+		char *msg = strtok(NULL, MSG_DELIMITER);
+		messaging_server_exec_room_bdcast(server, user, msg);
+	}
+	return -1; //Means no message match
+}
+
+
+// -----------------------------------------------------------------------------
+// Static functions (USER MESSAGES)
+// -----------------------------------------------------------------------------
+
 static void messaging_server_exec_connect(ServerData *server, User *user, const char *user_name){
 	//name must be not null
 	if(user_name == NULL){
@@ -53,7 +123,41 @@ static void messaging_server_exec_connect(ServerData *server, User *user, const 
 	return;
 }
 
-static void messaging_server_exec_open_room(ServerData *server, User *user, char *name){
+static void messaging_server_exec_disconnect(ServerData* server, User* user, char* name){
+	//TODO To implements
+}
+
+static void messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){
+	//Check valid message parameters (not null)
+	if(user == NULL || receiver == NULL || msg == NULL){
+		fprintf(stderr, "[ERR] Invalid whisper message (NULL data)\n");
+		return;
+	}
+
+	//Message shouldn't be empty (Or just spaces)
+	msg = str_trim(msg);
+	if(strlen(msg) == 0){
+		fprintf(stderr, "[ERR] Invalid whisper message (Empty message)\n");
+		return;
+	}
+
+	//Recover the receiver from list of user (Send error if wrong)
+	User *u = list_get_where(&(server->list_users), receiver, user_match_name);
+	if(u == NULL){
+		messaging_send_error(user->socket, MSG_ERR_UNKOWN_USER, "User doesn't exists.");
+		return;
+	}
+
+	//@TODO add mutex for writing in socket
+	messaging_send_whisper(u->socket, user->login, receiver, msg);
+}
+
+
+// -----------------------------------------------------------------------------
+// Static functions (ROOM MESSAGES)
+// -----------------------------------------------------------------------------
+
+static void messaging_server_exec_room_open(ServerData *server, User *user, char *name){
 	//Params must be not null
 	if(user == NULL || name == NULL){
 		fprintf(stderr, "[ERR] Invalid open message (NULL data)\n");
@@ -88,7 +192,37 @@ static void messaging_server_exec_open_room(ServerData *server, User *user, char
 	messaging_send_confirm(user->socket, MSG_CONF_GENERAL, "Room successfully created");
 }
 
-static void messaging_server_exec_enter_room(ServerData* server, User* user, char* name){
+static void messaging_server_exec_room_close(ServerData* server, User* user, char* name){
+	//Process param (Check if valid name)
+	name = (name == NULL) ? NULL : str_trim(name);
+	if(user == NULL || name == NULL || room_is_valid_name(name) != 1){
+		fprintf(stderr, "[ERR] Invalid enter message\n");
+		messaging_send_error(user->socket, MSG_ERR_GENERAL, "Invalid room name.");
+		return;
+	}
+	
+	//Try to remove room and send err message if error (See doc fct for err value)
+	int errstatus = server_data_remove_room(server, user, name);
+	switch(errstatus){
+		case 1:
+			messaging_send_confirm(user->socket, MSG_CONF_GENERAL, "Room successfully closed.");
+			return;
+		case -1:
+			messaging_send_error(user->socket, MSG_ERR_GENERAL, "Room doesn't exists.");
+			return;
+		case -2:
+			messaging_send_error(user->socket, MSG_ERR_GENERAL, "Room must be empty in order to be closed.");
+			return;
+		case -3:
+			messaging_send_error(user->socket, MSG_ERR_GENERAL, "You must own this room.");
+			return;
+		case -4:
+			messaging_send_error(user->socket, MSG_ERR_GENERAL, "Error occured while closing.");
+			return;
+	}
+}
+
+static void messaging_server_exec_room_enter(ServerData* server, User* user, char* name){
 	//Params must be not null
 	name = (name == NULL) ? NULL : str_trim(name);
 	if(user == NULL || name == NULL || room_is_valid_name(name) != 1){
@@ -124,29 +258,9 @@ static void messaging_server_exec_enter_room(ServerData* server, User* user, cha
 	list_iterate(&(server->list_rooms), room_display);
 }
 
-static void messaging_server_exec_whisper(ServerData *server, User *user, char *receiver, char *msg){
-	//Check valid message parameters (not null)
-	if(user == NULL || receiver == NULL || msg == NULL){
-		fprintf(stderr, "[ERR] Invalid whisper message (NULL data)\n");
-		return;
-	}
-
-	//Message shouldn't be empty (Or just spaces)
-	msg = str_trim(msg);
-	if(strlen(msg) == 0){
-		fprintf(stderr, "[ERR] Invalid whisper message (Empty message)\n");
-		return;
-	}
-
-	//Recover the receiver from list of user (Send error if wrong)
-	User *u = list_get_where(&(server->list_users), receiver, user_match_name);
-	if(u == NULL){
-		messaging_send_error(user->socket, MSG_ERR_UNKOWN_USER, "User doesn't exists.");
-		return;
-	}
-
-	//@TODO add mutex for writing in socket
-	messaging_send_whisper(u->socket, user->login, receiver, msg);
+static void messaging_server_exec_room_leave(ServerData* server, User* user){
+	//TODO To implements
+	return;
 }
 
 static void messaging_server_exec_room_bdcast(ServerData *server, User *user, const char* msg){
@@ -164,49 +278,6 @@ static void messaging_server_exec_room_bdcast(ServerData *server, User *user, co
 	}
 	fprintf(stdout, "log room (%s): '%s' send '%s'\n", user->room, user->login, msg);
 	room_broadcast_message(room, user, msg);
-}
-
-// -----------------------------------------------------------------------------
-// Receive process Functions
-// -----------------------------------------------------------------------------
-
-int messaging_server_exec_receive(ServerData *server, User *user, char *msg){
-	if(msg == NULL){ return -1; }
-
-	//Recover the type of message (First element in msg, must be not NULL)
-	char *token = strtok(msg, MSG_DELIMITER);
-	if(token == NULL){ return -1; }
-
-	//Process each possible message
-	//User connection
-	if(strcmp(token, MSG_TYPE_CONNECT) == 0){
-		messaging_server_exec_connect(server, user, strtok(NULL, MSG_DELIMITER));
-		return 1;
-	}
-	//User whipser
-	else if(strcmp(token, MSG_TYPE_WHISPER) == 0){
-		char *sender	= strtok(NULL, MSG_DELIMITER);
-		char *receiver	= strtok(NULL, MSG_DELIMITER);
-		char *msg		= strtok(NULL, MSG_DELIMITER);
-		messaging_server_exec_whisper(server, user, receiver, msg);
-		return 1;
-	}
-	//Create new room
-	else if(strcmp(token, MSG_TYPE_ROOM_OPEN) == 0){
-		char *name = strtok(NULL, MSG_DELIMITER);
-		messaging_server_exec_open_room(server, user, name);
-	}
-	//Enter rooom
-	else if(strcmp(token, MSG_TYPE_ROOM_ENTER) == 0){
-		char *name = strtok(NULL, MSG_DELIMITER);
-		messaging_server_exec_enter_room(server, user, name);
-	}
-	//Room broadcast message
-	else if(strcmp(token, MSG_TYPE_ROOM_BDCAST) == 0){
-		char *msg		= strtok(NULL, MSG_DELIMITER);
-		messaging_server_exec_room_bdcast(server, user, msg);
-	}
-	return -1; //Means no message match
 }
 
 

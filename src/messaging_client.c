@@ -62,24 +62,25 @@ int messaging_exec_client_receive(ClientData *client, const int socket, char *ms
 	char *token = strtok(msg, MSG_DELIMITER);
 	if(token == NULL){ return -1; }
 
-	//Process each possible message
+	// Asset messages
 	if(strcmp(token, MSG_TYPE_CONFIRM) == 0){
 		char *type	= strtok(NULL, MSG_DELIMITER);
 		char *msg	= strtok(NULL, MSG_DELIMITER);
 		messaging_client_receiv_confirm(client, type, msg);
-	}
-	else if(strcmp(token, MSG_TYPE_WHISPER) == 0){
-		char *sender	= strtok(NULL, MSG_DELIMITER);
-		char *receiver	= strtok(NULL, MSG_DELIMITER);
-		char *msg		= strtok(NULL, MSG_DELIMITER);
-		messaging_client_receiv_whisper(client, sender, msg);
 	}
 	else if(strcmp(token, MSG_TYPE_ERROR) == 0){
 		char *type	= strtok(NULL, MSG_DELIMITER);
 		char *msg	= strtok(NULL, MSG_DELIMITER);
 		messaging_client_receiv_error(client, type, msg);
 	}
-	//Msg from room (Broadcast)
+	//User message
+	else if(strcmp(token, MSG_TYPE_WHISPER) == 0){
+		char *sender	= strtok(NULL, MSG_DELIMITER);
+		char *receiver	= strtok(NULL, MSG_DELIMITER);
+		char *msg		= strtok(NULL, MSG_DELIMITER);
+		messaging_client_receiv_whisper(client, sender, msg);
+	}
+	//Room messages
 	else if(strcmp(token, MSG_TYPE_ROOM_BDCAST) == 0){
 		char *msg	= strtok(NULL, MSG_DELIMITER);
 		fprintf(stdout, "\nRoom: %s\n", msg);

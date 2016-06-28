@@ -43,6 +43,11 @@ int room_is_valid_name(const char *name){
 	return (size < ROOM_MIN_SIZE || size > ROOM_MAX_SIZE) ? -1 : 1;
 }
 
+int room_is_empty(Room *room){
+	assert(room != NULL);
+	return list_size(&(room->list_users)) <= 0;
+}
+
 
 // -----------------------------------------------------------------------------
 // Room / User management
@@ -97,4 +102,8 @@ int room_display(void* room){
 	Room r = *(Room*) room;
 	fprintf(stdout, "Room name: '%s'\n", r.name);
 	return 1;
+}
+
+void room_free_elt(void* room){
+	room_destroy(room);
 }

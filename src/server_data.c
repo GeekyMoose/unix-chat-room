@@ -14,7 +14,8 @@
 
 void server_data_init(ServerData *data){
 	assert(data != NULL);
-	list_init(&(data->list_users), NULL);
+	list_init(&(data->list_users), NULL); //User is destroyer from the thread.
+	list_init(&(data->list_rooms), room_free_elt);
 	data->is_listening	= 0;
 	data->is_working	= 1;
 }
@@ -38,7 +39,6 @@ int server_data_name_is_used(const Linkedlist *list, char *name){
 }
 
 int server_data_add_room(ServerData *server, User *user, char *name){
-	fprintf(stdout, "DEBUG %s:%d: user(%s) , name(%s)\n", __FILE__, __LINE__, user->login, name);
 	//Check valid name
 	if(room_is_valid_name(name) == -1){
 		return -1;
@@ -47,12 +47,34 @@ int server_data_add_room(ServerData *server, User *user, char *name){
 	if(server_data_room_is_used(&(server->list_rooms), name) == 1){
 		return -2;
 	}
+	//Create room
 	Room *room = room_create(user, name);
 	if(room == NULL){
 		return 0;
 	}
 	list_append(&(server->list_rooms), room);
 	return 1;
+}
+
+int server_data_remove_room(ServerData *server, User *user, char *name){
+	//TODO Add mutex on the room list
+	//Check if room exists
+	Room* room = list_get_where(&(server->list_rooms), (void*)name, room_match_name);
+	fprintf(stdout, "DEBUG %s:%d - '%s'\n", __FILE__, __LINE__, (room == NULL) ? "null" : room->name);
+	if(room == NULL){
+		return -1;
+	}
+	//Check whether room is empty
+	if(room_is_empty(room) != 1){
+		return -2;
+	}
+	//Check whether user is owner
+	if(strcmp(user->login, room->owner_name) != 0){
+		return -3;
+	}
+	//Actually delete the room
+	int err = list_free_where(&(server->list_rooms), (void*)name, room_match_name);
+	return (err == 1) ? 1 : -4;
 }
 
 int server_data_room_is_used(const Linkedlist *list, char *name){

@@ -106,6 +106,7 @@ int main(int argc, char **argv){
 	}
 
 	//Init signal process
+	//TODO To update
 	sigset_t mask, oldmask;
 	sethandler(SIG_IGN, SIGPIPE);
 	//sethandler(siginthandler, SIGINT);
